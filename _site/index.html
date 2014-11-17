@@ -11,7 +11,7 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta http-equiv="X-UA-Compatible" content="IE=8" />
 
-<link href='//api.tiles.mapbox.com/mapbox.js/v1.4.0/mapbox.css' rel='stylesheet' />
+<!-- <link href='//api.tiles.mapbox.com/mapbox.js/v1.4.0/mapbox.css' rel='stylesheet' /> -->
   <!-- // <script src='http://api.tiles.mapbox.com/mapbox.js/v1.6.2/mapbox.js'></script> -->
   <!-- <link href='http://api.tiles.mapbox.com/mapbox.js/v1.6.2/mapbox.css' rel='stylesheet' /> -->
   <!--[if lte IE 8]>
@@ -53,8 +53,41 @@
 
   
 
-        <div id="master_container">
-	<div id="map"></div>
+        <!--[if lt IE 9]>
+<style type="text/css">
+  #master_container, #pre_content, #attribution {display: none;}  
+  .fallback img {
+    display: block;
+  }
+  .fallback {
+    display: inline;
+  }
+</style>
+<![endif]-->
+
+
+
+<!-- Fallback info -->
+    <div class="fallback">
+      <!-- <img src="/img/fallback.png"> -->
+      <img src="/sites/prod/files/fallback.png">
+    </div>
+
+
+<div id="pre_content">
+	<h2>Energy Production in Trillion Btu: 2012</h2>
+	<p>Click on each state to learn more about how much energy they produce</p>
+	<!-- <h3>U.S. Total Net Energy Imported: 15,880 Trillion Btu</h3>
+	<p>Blue circles represent a net export of energy, orange circles represent a net import</p> -->
+	
+</div>
+<div id="master_container">
+
+	<svg id="map_container"></svg>
+
+</div>
+<div id="attribution">
+	<p>Source: <a href="http://www.eia.gov/state/seds/seds-data-complete.cfm?sid=US" target="_blank">EIA State Energy Data Systems</a></p>
 </div>
 
 
@@ -69,7 +102,16 @@
 
 <!-- Javascript references -->
   <!-- Libraries such as jquery, mapbox, highcharts. Can (probably should) be referenced from external setting-->
-<script src='https://api.tiles.mapbox.com/mapbox.js/v1.6.4/mapbox.js'></script>
+ <!-- // <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script> -->
+  <script type="text/javascript" src="js/d3.js"></script>
+  <!-- // <script src="http://www.d3plus.org/js/d3plus.js"></script> -->
+
+  <!-- // <script src="http://labratrevenge.com/d3-tip/javascripts/d3.tip.v0.6.3.js"></script> -->
+
+  
+<!-- <script src='https://api.tiles.mapbox.com/mapbox.js/v1.6.4/mapbox.js'></script> -->
+
+  <script type="text/javascript" src="js/topo.js"></script>
 
   <!-- Data (JSON, etc) -->
   
