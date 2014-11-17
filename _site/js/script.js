@@ -49,7 +49,7 @@ var pie = d3.layout.pie()
       //Trying to figure out a way to prune results.
     });
 // d3.json("/sites/prod/files/us_10m_topo5.json", function(error, us) {
-d3.json("js/us_10m_topo5.json", function(error, us) {
+d3.json("js/us_93_02_v1.json", function(error, us) {
   if (error) return console.error(error);
 
   svg.selectAll(".state")
@@ -69,14 +69,14 @@ d3.json("js/us_10m_topo5.json", function(error, us) {
     .data(topojson.feature(us, us.objects.us_10m).features)
   .enter().append("circle")
     .attr("class", function(d) {
-       var difference = (d.properties.total - d.properties.consumption)
+       // var difference = (d.properties.total - d.properties.consumption)
 
-          if (d.properties.total >= 0) {
-            return "posB bubble"
-          } else {
-            return "negB bubble"
-          };
-      
+       //    if (d.properties.total >= 0) {
+       //      return "posB bubble"
+       //    } else {
+       //      return "negB bubble"
+       //    };
+      return "posB bubble"
     });    
 
 
@@ -137,7 +137,7 @@ d3.json("js/us_10m_topo5.json", function(error, us) {
 
     	svg.selectAll("circle.bubble")
     		.data(topojson.feature(us, us.objects.us_10m).features
-          .sort(function(a, b) { return b.properties.total - a.properties.total; }))
+          .sort(function(a, b) { return b.properties.total2012 - a.properties.total2012; }))
         .attr("transform", function(d) { 
           return "translate(" + path.centroid(d) + ")"; })
         .attr("r", function(d) { 
@@ -146,11 +146,11 @@ d3.json("js/us_10m_topo5.json", function(error, us) {
           var abs_difference = Math.abs(difference);
           // console.log(abs_difference);
 
-          return radius2(d.properties.total)
+          return radius2(d.properties.total2012)
 
 
         })
-        .attr("text", function(d){ return d.properties.name});
+        .attr("text", function(d){ return d.properties.id});
 
     }
 
@@ -198,12 +198,12 @@ d3.json("js/us_10m_topo5.json", function(error, us) {
 
 // Create array for pie charts here!!!!!!!!!!!!!!!!!!!!!!! put in memory and use laterZZzzzZzzZzzzZZzzZZZz
       var data_array = [        
-        {type: "Coal", value: data.properties.coal, x:centroid_adjusted[0], y:centroid_adjusted[1]},
-        {type: "Crude", value: data.properties.crude, x:centroid_adjusted[0], y:centroid_adjusted[1]},
-        {type: "Natural Gas", value: data.properties.nat_gas, x:centroid_adjusted[0], y:centroid_adjusted[1]},
-        {type: "Nuclear", value: data.properties.nuclear, x:centroid_adjusted[0], y:centroid_adjusted[1]},
-        {type: "Biofuels", value: data.properties.biofuels, x:centroid_adjusted[0], y:centroid_adjusted[1]},
-        {type: "Other Renewable Energy", value: data.properties.o_renew, x:centroid_adjusted[0], y:centroid_adjusted[1]}];
+        {type: "Coal", value: data.properties.coal2012, x:centroid_adjusted[0], y:centroid_adjusted[1]},
+        {type: "Crude", value: data.properties.crude2012, x:centroid_adjusted[0], y:centroid_adjusted[1]},
+        {type: "Natural Gas", value: data.properties.nat_gas2012, x:centroid_adjusted[0], y:centroid_adjusted[1]},
+        {type: "Nuclear", value: data.properties.nuclear2012, x:centroid_adjusted[0], y:centroid_adjusted[1]},
+        {type: "Total Renewable Energy", value: data.properties.totalrenew2012, x:centroid_adjusted[0], y:centroid_adjusted[1]},
+        {type: "Other Renewable Energy", value: data.properties.otherrenew2012, x:centroid_adjusted[0], y:centroid_adjusted[1]}];
         // {type: "t_renew", value: data.properties.t_renew}];    
 
       var tooltipContainer = svg.append("g")
@@ -223,7 +223,7 @@ d3.json("js/us_10m_topo5.json", function(error, us) {
         .append("text")
         .attr("class","tip-text")
         .text(function(d){
-            return data.properties.name;
+            return data.properties.id;
         })
         .attr("transform", function() { 
           return "translate(" + tip_text + ")"; });
@@ -232,7 +232,7 @@ d3.json("js/us_10m_topo5.json", function(error, us) {
         .append("text")
         .attr("class","tip-text2")
         .text(function(d){
-            return "Total: " + data.properties.total + " Trillion Btu";
+            return "Total: " + data.properties.total2012 + " Trillion Btu";
         })
         .attr("transform", function() { 
           return "translate(" + tip_text2 + ")"; });
