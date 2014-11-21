@@ -11,11 +11,9 @@ var svg = d3.select("#map_container")
   .attr("width", width)
   .attr("height", height);
 
-var radius = d3.scale.sqrt()
-  .domain([0, 1000])
-  .range([10, 25]);    
-  // .domain([0, 3000])
-  // .range([5, 15]);  
+var radius = d3.scale.sqrt()  
+			.domain([0, 1000])
+			.range([(2), (width / 45)]); 
 
 var legend = svg.append("g")
   .attr("class", "legend")    
@@ -26,192 +24,240 @@ var legend = svg.append("g")
 // var 80 = 80;              
 
 // load some data
-d3.json("js/us_93_02_v1.json", function(error, us) {
+d3.json("js/us_93_02_v2.json", function(error, us) {
 	if (error) return console.error(error);
 
-	//build a map outside of resize
-	svg.selectAll(".state")
-    .data(topojson.feature(us, us.objects.us_10m).features)
-    .enter().append("path")
-      .attr("class", function(d) {return "state " + d.id; });
+	d3.json("js/offshore.json", function(error, offshore) {
+		if (error) return console.error(error + "herro error in offshore");
 
-	svg.append("path")
-    .datum(topojson.mesh(us, us.objects.us_10m, function(a,b) {return a !== b;}))
-    .attr("class", "state-boundary");
+		var data2 = topojson.feature(us, us.objects.us_10m).features
+		// console.log(data2[0].properties)
 
-	svg.append("g")
-		.attr("class", "bubbles")
-		.selectAll("circle")
-			.data(topojson.feature(us, us.objects.us_10m).features)
-			.enter().append("circle")
-			.attr("class", "posB bubble")   
+		// for (var i = 0; i < data2[0].properties.length; i++) {
+		// 	console.log(data2[0].properties)
+		// };
 
-	// Resize function
-	function resize() {
-		// resize width
-		var width = parseInt(d3.select("#master_container").style("width")),
-	    height = width / 2;
+		var typeArray = [[],[],[],[],[],[],[],[]];
 
-		// resize projection
-	  // Smaller viewport
-		if (width <= 800) {
-			projection
-				.scale(width * 1.2)
-				.translate([width / 2, ((height / 2) + 45)])             
-		} else if (width <= 900) {
-			projection
-				.scale(width * 1.2)
-				.translate([width / 2, ((height / 2) + 30)])             
-		} 
-		// full viewport
-		else {
-			projection
-				.scale(width)
-				.translate([width / 2, ((height / 2) + 10)])   
-		};	    
+		for (var datapoint in data2[0].properties){
+		 	// if (datapoint == type) {
+	 		// console.log(d.properties.name + " " + datapoint + ": " + d.properties[datapoint])
+	 		// var raw = d.properties[datapoint] 		
+	 		if (datapoint === "name") {
+	 			typeArray[0].push(datapoint)
+	 		}
+		 	else if (datapoint.substring(2,0) == "to") {
+	 			typeArray[1].push(datapoint)
+	 		}
+	 		else if (datapoint.substring(2,0) == "co") {
+	 			typeArray[2].push(datapoint)
+	 		}
+	 		else if (datapoint.substring(2,0) == "cr") {
+	 			typeArray[3].push(datapoint)
+	 		}
+	 		else if (datapoint.substring(2,0) == "na") {
+	 			typeArray[4].push(datapoint)
+	 		}
+	 		else if (datapoint.substring(2,0) == "tr") {
+	 			typeArray[5].push(datapoint)
+	 		}
+	 		else if (datapoint.substring(2,0) == "or") {
+	 			typeArray[6].push(datapoint)
+	 		}
+	 		else if (datapoint.substring(2,0) == "nu") {
+	 			typeArray[7].push(datapoint)
+	 		};
+	 	}
 
-		// redifine the radius of circles
-		var radius = d3.scale.sqrt()  
-			.domain([0, 1000])
-			.range([(2), (width / 45)]); 
+		//build a map outside of resize
+		svg.selectAll(".state")
+	    .data(topojson.feature(us, us.objects.us_10m).features)
+	    .enter().append("path")
+	      .attr("class", function(d) {return "state " + d.id; });
 
-		// create the legend
-		legend.append("circle")
+		svg.append("path")
+	    .datum(topojson.mesh(us, us.objects.us_10m, function(a,b) {return a !== b;}))
+	    .attr("class", "state-boundary");
 
-    legend.append("text")
-      .attr("dy", "1.3em")
-      .text(d3.format(".1s"));
+		var bubblediv = svg.append("g")
+			.attr("class", "bubbles")
 
-    // legend.append("text")
-    //     .text("Btu")
-    //     .attr("transform", "translate(" + (width - (radius2(10000) + 10)) + "," + (height - 10) + ")");      
 
-		legend        
-			.attr("transform", "translate(" + (width - (radius(10000) + 10)) + "," + (height - 10) + ")");
+			bubblediv.selectAll("circle")
+				.data(topojson.feature(us, us.objects.us_10m).features)
+				.enter().append("circle")
+				.attr("class", "posB bubble")   
 
-    legend.selectAll("circle")
-      .attr("cy", function(d) { return -radius(d); })
-      .attr("r", radius);
+		// Resize function
+		function resize() {
+			// resize width
+			var width = parseInt(d3.select("#master_container").style("width")),
+		    height = width / 2;
 
-    legend.selectAll("text")
-      .attr("y", function(d) { return -2 * radius(d); }); 
+		  // redifine the radius of circles
+			var radius = d3.scale.sqrt()  
+				.domain([0, 1000])
+				.range([(2), (width / 45)]); 
 
-    // resize paths of states
-		svg.selectAll('path.state')
-    	.attr("d", path);
+			// resize projection
+		  // Smaller viewport
+			if (width <= 800) {
+				projection
+					.scale(width * 1.2)
+					.translate([width / 2, ((height / 2) + 45)])             
+			} else if (width <= 900) {
+				projection
+					.scale(width * 1.2)
+					.translate([width / 2, ((height / 2) + 30)])             
+			} 
+			// full viewport
+			else {
+				projection
+					.scale(width)
+					.translate([width / 2, ((height / 2) + 10)])   
+			};	    
 
-  	svg.selectAll('path.state-boundary')
-  		.attr("d", path);
+			// create the legend
+			legend.append("circle")
 
-  	// resize circles
-		svg.selectAll("circle.bubble")
-  		.data(topojson.feature(us, us.objects.us_10m).features
-        .sort(function(a, b) { return b.properties.total2012 - a.properties.total2012; }))
-      .attr("transform", function(d) { 
-        return "translate(" + path.centroid(d) + ")"; })
-      .attr("r", function(d) { 
-        // var difference = (d.properties.total - d.properties.consumption)
-        // console.log(d.properties.name + ": " + difference);
-        // var abs_difference = Math.abs(difference);
-        // console.log(abs_difference);
-        return radius(d.properties.total2012)
-      })
-      .attr("text", function(d){ return d.properties.id});
-	}
+	    legend.append("text")
+	      .attr("dy", "1.3em")
+	      .text(d3.format(".1s"));
 
-	// create the tooltip
-	function tooltip(d) {     
-		// grab the width to define breakpoints
-		width = parseInt(d3.select("#master_container").style("width"))
+	    // legend.append("text")
+	    //     .text("Btu")
+	    //     .attr("transform", "translate(" + (width - (radius2(10000) + 10)) + "," + (height - 10) + ")");      
 
-		// Remove everything and start over.
-    d3.selectAll(".tool").remove();
+			legend        
+				.attr("transform", "translate(" + (width - (radius(10000) + 10)) + "," + (height - 10) + ")");
 
-    // store the data
-		var data = d;
-    centroid = path.centroid(data);
+	    legend.selectAll("circle")
+	      .attr("cy", function(d) { return -radius(d); })
+	      .attr("r", radius);
 
-    // where it hangs based on view size
-    if (width > 900) {
-      if (centroid[1] < 250) {
-        centroid_adjusted = [(centroid[0]-85),(centroid[1]+25)];
-      } else {
-        centroid_adjusted = [(centroid[0]-85),(centroid[1]-80)];
-      };        
-    }
-    else if (width > 700) {  
-      if (centroid[1] < 225) {
-        centroid_adjusted = [(centroid[0]-85),(centroid[1]+25)];
-      } else {
-        centroid_adjusted = [(centroid[0]-85),(centroid[1]-80)];
-      };
-    }
-    else if (width > 480) {
-      if (centroid[0] < width / 2) {
-        centroid_adjusted = [(width - 175),(5)];        
-      } else {
-        centroid_adjusted = [(5),(5)];               
-      };
-    } else {
-      if (centroid[0] < 200) {
-        centroid_adjusted = [(width - 175),(5)];        
-      } else {
-        centroid_adjusted = [(5),(5)];               
-      };
-    };    
+	    legend.selectAll("text")
+	      .attr("y", function(d) { return -2 * radius(d); }); 
 
-    // where it hangs within the tip
-    tip_text  = [(centroid_adjusted[0] + 80 + 5),(centroid_adjusted[1] + 20)];
-    tip_text2  = [(centroid_adjusted[0] + 80 + 5),(centroid_adjusted[1] + 40)];
-    tip_close = [(centroid_adjusted[0] + 80*2),(centroid_adjusted[1]+(15))];
+	    // resize paths of states
+			svg.selectAll('path.state')
+	    	.attr("d", path);
 
-    // build the rectangle
-    var tooltipContainer = svg.append("g")
-      .attr("id", "tooltip")
-      .attr("class", "tool")
-      .append("rect")
-        // .attr("id", "tooltip")
-        .attr("transform", function() { 
-          return "translate(" + centroid_adjusted + ")"; })
-        .attr("width", (170))
-        .attr("height", (50))
-        .attr("rx", 6)
-        .attr("ry", 6)
-  	
-  	// tip texts
-    svg
-      .append("text")
-      .attr("class","tip-text tool")
-      .text(function(d){
-          return data.properties.name;          
-      })
-      .attr("transform", function() { 
-        return "translate(" + tip_text + ")"; });
+	  	svg.selectAll('path.state-boundary')
+	  		.attr("d", path);
 
-    svg
-      .append("text")
-      .attr("class","tip-text2 tool")
-      .text(function(d){
-          return "Total: " + data.properties.total2012 + " Trillion Btu";
-      })
-      .attr("transform", function() { 
-        return "translate(" + tip_text2 + ")"; });
+			BuildBubbles(width, type);
+		}
+		
+		// Tooltips section goes here
 
-    svg.append("g")
-      .attr("class", "closer tool")
-      .attr("transform", function(){
-        return "translate(" + tip_close + ")";
-      })
-        .append("text")
-        .attr("class", "tip-text2 tool")
-        .text("X").on("click", function(){
-        	d3.selectAll(".tool").remove();
-        });
-	}
-   
-  d3.select(window).on('resize', resize); 
-  d3.selectAll("circle.bubble").on('click', tooltip);
-  resize(); 
-});
+		function BuildBubbles(w, type) {
+			
+			// redifine the radius of circles
+			var radius = d3.scale.sqrt()  
+				.domain([0, 1000])
+				.range([(2), (w / 45)]); 
+
+			var TheData = topojson.feature(us, us.objects.us_10m).features		
+			// load offshore data, and below do the circle creation but with lat/long instead of a centroid-from-topo
+
+			console.log(TheData)		
+
+			var gulf = [(path.centroid(TheData[3])[0] + 10),path.centroid(TheData[3])[1]]
+			// console.log(gulf)		
+
+		// This is a loop
+			svg.selectAll("circle.bubble")
+	  		.data(TheData
+	        .sort(function(a, b) {        
+	        	return b.properties.total2012 - a.properties.total2012; 
+	        }))
+	      .attr("transform", function(d) { 
+
+	        return "translate(" + path.centroid(d) + ")"; })
+	      .attr("r", function(d) { 		
+	      	// Set what we want to look at 
+		 			for (var datapoint in d.properties){
+				 	 	if (datapoint == type) {
+				   		// console.log(d.properties.name + " " + datapoint + ": " + d.properties[datapoint])
+				   		var raw = d.properties[datapoint]
+				   	}
+					}
+	        return radius(raw)
+	      })
+	      .attr("text", function(d){ return d.properties.id});	
+
+			svg.selectAll(".gu").data([]).exit().remove();
+
+			// create the gulf coast div
+			bubblediv.append("circle")
+				.attr("class", "posB bubble gu")
+	      .attr("transform", function(d) { 
+	        return "translate(" + gulf + ")"; })
+	      .attr("r", function(d) { 		
+	    //   	// Set what we want to look at 
+		 		// 	for (var datapoint in d.properties){
+				 // 	 	if (datapoint == type) {
+				 //   		// console.log(d.properties.name + " " + datapoint + ": " + d.properties[datapoint])
+				 //   		var raw = d.properties[datapoint]
+				 //   	}
+					// }
+	    //     return radius(raw)
+	    return i
+	      })
+	      // .attr("text", function(d){ return d.properties.id});	
+
+		}
+
+		// begin looping stuff
+		var num	= 20; //number of iterations, i.e. years
+		
+		var i = 0; // which year you are on
+		var k = 1; // which type of data you are looking at (total vs crude, etc)
+		// var type = "total2012";
+		var j = 0;
+		var type = typeArray[k][19]  // wher to start
+
+		function start() {
+			play = setInterval(mechanic,300);	
+
+			// play = (function loopingFunction() {
+		 //    mechanic();
+		 //    clearTimeout(loopingFunction);
+		 //    setTimeout(loopingFunction, 300);
+			// })();
+		}
+
+		// what to do each iteration
+		function mechanic() {
+			
+			// console.log(j)	
+			rebuildLoop();
+			
+			i += 1;
+			// run three times for now
+			if (i ===num) {			
+				clearInterval(play);		 
+			}	
+		}
+
+		function rebuildLoop() {
+			console.log(i)
+
+			var type = typeArray[k][i]
+
+			BuildBubbles(width,type)
+		}
+	  
+	  // start looping
+	  start(); 
+
+	  d3.select(window).on('resize', resize); 
+	  // d3.selectAll("circle.bubble").on('click', tooltip);
+
+	  // initial run
+	  resize(); 	    	
+
+	}); //end offshore.json
+}); //end states.json
 
 
