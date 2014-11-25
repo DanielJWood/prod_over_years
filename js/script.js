@@ -31,14 +31,11 @@ d3.json("js/us_93_02_v2.json", function(error, us) {
 		if (error) return console.error(error + "herro error in offshore");
 
 		var data2 = topojson.feature(us, us.objects.us_10m).features
-		// console.log(data2[0].properties)
 
 		var typeArray = [[],[],[],[],[],[],[],[]];
 
 		for (var datapoint in data2[0].properties){
-		 	// if (datapoint == type) {
-	 		// console.log(d.properties.name + " " + datapoint + ": " + d.properties[datapoint])
-	 		// var raw = d.properties[datapoint] 		
+	
 	 		if (datapoint === "name") {
 	 			typeArray[0].push(datapoint)
 	 		}
@@ -84,49 +81,17 @@ d3.json("js/us_93_02_v2.json", function(error, us) {
 				.enter().append("circle")
 				.attr("class", "posB bubble")   
 
-    	// d3.select('#slider6').call(d3.slider().axis(true).min(1993).max(2012).step(1).on("slide", function(evt, value) {
-     //  	// d3.select('#slider3text').text(value);
-     //  	console.log('hello')
-    	// }));			
-			
-
-start_year = 1993;
-// cur_year = 2012;
-var takex;
-var play, slowplay = 0;
-var x;
-var h;
-// var homenum = ["4149","4149","4149","4149","4149","4149","8575","14 K","109 K","146 K","175 K","196 K","225 K","230 K","257 K","294 K","314 K","315 K","317 K","342 K","349 K","357 K","361 K","405 K","579 K","592 K","948 K","1.1 M","1.6 M","1.7 M","2.2 M","2.9 M","4.2 M","6.5 M","8.9 M","10 M","12 M","15 M"];
-
-
 var zoom_bar = new Dragdealer('zoom-bar', {
 	steps: 20,
 	// x: 1,
   snap: true,
   animationCallback: function(x, y) {
     // $('#zoom-bar .value').text(Math.round(x * 100));
-        cur_year = start_year+(x*(num-1))
-        handle.innerHTML = cur_year;
+        // cur_year = start_year+(x*(num-1))
+        // handle.innerHTML = i;
+        $("#handle").text(i)
   }
 });
-// var zoom_bar = new Dragdealer('zoom-bar', {
-//     steps: num,
-//     snap: true,
-//     x: 1,
-//     animationCallback: function(x, y)
-//     {
-//         cur_year = start_year+(x*(num-1))
-//         handle.innerHTML = cur_year;
-//         takex = x;
-//         // removal();
-//         h = x*(num-1);
-        
-//         // buildMap();             
-        
-//     }
-// });
-
-
 
 		// Resize function
 		function resize() {
@@ -136,11 +101,6 @@ var zoom_bar = new Dragdealer('zoom-bar', {
 			// resize width
 			var width = parseInt(d3.select("#master_container").style("width")),
 		    height = width / 2;
-
-		  // redifine the radius of circles
-			var radius = d3.scale.sqrt()  
-				.domain([0, 1000])
-				.range([(2), (width / 45)]); 
 
 			// resize projection
 		  // Smaller viewport
@@ -195,8 +155,6 @@ var zoom_bar = new Dragdealer('zoom-bar', {
 
 		function BuildBubbles(w, type) {			
 
-						zoom_bar.setValue(i / num);
-
 			// redifine the radius of circles
 			var radius = d3.scale.sqrt()  
 				.domain([0, 1000])
@@ -227,27 +185,39 @@ var zoom_bar = new Dragdealer('zoom-bar', {
 	        return "translate(" + pac + ")"; })
 	      .attr("r", function(d) { 		
 	      	var raw = offshore[1][type] / 1000;
-	      	// return radius(raw)
-	      	return i * 10
+	      	return radius(raw)
+	      	// return i * 10
 	      })
 	      .attr("text", function(d){ return offshore[1]["name"]});	
 
 var start1 = new Date().getTime()
 
-
+		// This is a loop
+			svg.selectAll("circle.bubble")
+	  		.data(topojson.feature(us, us.objects.us_10m).features		
+	        .sort(function(a, b) {        
+	        	return b.properties.total2012 - a.properties.total2012; 
+	        }))
+	      .attr("transform", function(d) { 
+	        return "translate(" + path.centroid(d) + ")"; })
+	      .attr("r", function(d) { 		
+					var raw = d.properties[type]
+	        return radius(raw)
+	      })
+	      .attr("text", function(d){ return d.properties.id});	
 
 			var elapsed = new Date().getTime() - start1;
 			console.log(i + ": " + elapsed)
+			
+			zoom_bar.setValue(i / num);
 
 		} //end bubbles function
 
 		// begin looping stuff
-		var num	= 20; //number of iterations, i.e. years
-		
+		var num	= 19; //number of iterations, i.e. years		
 		var i = 0; // which year you are on
 		var k = 1; // which type of data you are looking at (total vs crude, etc)
 		// var type = "total2012";
-		var j = 0;
 		var type = typeArray[k][19]  // wher to start
 
 		function start() {
@@ -266,7 +236,6 @@ var start1 = new Date().getTime()
 		// what to do each iteration
 		function mechanic() {
 
-			// console.log(j)	
 			rebuildLoop();
 			
 			i += 1;
@@ -284,15 +253,17 @@ var start1 = new Date().getTime()
 
 			BuildBubbles(width,type)
 		}
+		
+		// initial run
+	  resize(); 	    	
 	  
+
 	  // start looping
 	  start(); 
 
 	  d3.select(window).on('resize', resize); 
 	  // d3.selectAll("circle.bubble").on('click', tooltip);
 
-	  // initial run
-	  resize(); 	    	
 
 	}); //end offshore.json
 }); //end states.json
