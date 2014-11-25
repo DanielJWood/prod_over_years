@@ -21,8 +21,6 @@ var legend = svg.append("g")
 	.data([500, 2000, 5000])
 	.enter().append("g");
 
-
-
 // load some data
 d3.json("js/us_93_02_v2.json", function(error, us) {
 	if (error) return console.error(error);
@@ -81,22 +79,11 @@ d3.json("js/us_93_02_v2.json", function(error, us) {
 				.enter().append("circle")
 				.attr("class", "posB bubble")   
 
-var zoom_bar = new Dragdealer('zoom-bar', {
-	steps: 20,
-	// x: 1,
-  snap: true,
-  animationCallback: function(x, y) {
-    // $('#zoom-bar .value').text(Math.round(x * 100));
-        // cur_year = start_year+(x*(num-1))
-        // handle.innerHTML = i;
-        $("#handle").text(i)
-  }
-});
-
 		// Resize function
-		function resize() {
+		function resize() {			
 
-			// d3.select('#slider6').call(d3.slider().value(1999));
+			// d3.selectAll(".legend").remove();
+			d3.selectAll("#slider").remove();
 
 			// resize width
 			var width = parseInt(d3.select("#master_container").style("width")),
@@ -119,6 +106,21 @@ var zoom_bar = new Dragdealer('zoom-bar', {
 					.scale(width)
 					.translate([width / 2, ((height / 2) + 10)])   
 			};	    
+
+			var bottom = height - 100;
+			var left = 0;
+
+			var sliderContainer = svg.append("g")
+      .attr("id", "slider")
+      // .attr("class", "sly")
+      .append("rect")
+        // .attr("id", "tooltip")
+        .attr("transform", function() { 
+          return "translate("+ left + ","+ bottom +")"; })
+        .attr("width", (170))
+        .attr("height", (50))
+        .attr("rx", 6)
+        .attr("ry", 6)
 
 			// create the legend
 			legend.append("circle")
@@ -154,6 +156,7 @@ var zoom_bar = new Dragdealer('zoom-bar', {
 		// Tooltips section goes here
 
 		function BuildBubbles(w, type) {			
+			d3.selectAll(".sly").remove();
 
 			// redifine the radius of circles
 			var radius = d3.scale.sqrt()  
@@ -207,11 +210,17 @@ var start1 = new Date().getTime()
 	      .attr("text", function(d){ return d.properties.id});	
 
 			var elapsed = new Date().getTime() - start1;
-			console.log(i + ": " + elapsed)
-			
-			zoom_bar.setValue(i / num);
 
-		} //end bubbles function
+			// Add the year, 
+			svg
+	      .append("text")
+	      .attr("class","tip-text sly")
+	      .text(function(d){
+	          return i + 1993         
+	      })
+	      .attr("transform", function() { 
+	        return "translate(100,100)"; });
+			} //end bubbles function
 
 		// begin looping stuff
 		var num	= 19; //number of iterations, i.e. years		
