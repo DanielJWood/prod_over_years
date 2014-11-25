@@ -22,7 +22,9 @@
 
 
 <link rel="stylesheet" type="text/css" href="css/style.css">
+<link rel="stylesheet" type="text/css" href="css/dragdealer.css">
 
+<!-- <link rel="stylesheet" type="text/css" href="css/slider.css"> -->
 
 <!-- /End Merged CSS -->
 
@@ -88,6 +90,13 @@
 	<svg id="map_container"></svg>
 
 </div>
+<div id='z'>
+    <div id='zoom-bar' class='dragdealer'>
+        <div id='handle' class="handle red-bar">1</div>    
+    </div>
+</div>
+
+    <!-- <div id="slider6"></div> -->
 <!-- <div id="attribution">
 	<p>Source: <a href="http://www.eia.gov/state/seds/seds-data-complete.cfm?sid=US" target="_blank">EIA State Energy Data Systems</a></p>
 </div> -->
@@ -104,7 +113,7 @@
 
 <!-- Javascript references -->
   <!-- Libraries such as jquery, mapbox, highcharts. Can (probably should) be referenced from external setting-->
- <!-- // <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script> -->
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
   <script type="text/javascript" src="js/d3.js"></script>
   <!-- // <script src="http://www.d3plus.org/js/d3plus.js"></script> -->
 
@@ -112,7 +121,8 @@
 
   
 <!-- <script src='https://api.tiles.mapbox.com/mapbox.js/v1.6.4/mapbox.js'></script> -->
-
+  <!-- // <script type="text/javascript" src="js/slider.js"></script> -->
+  <script type="text/javascript" src="js/drag/dragdealer.min.js"></script>
   <script type="text/javascript" src="js/topo.js"></script>
 
   <!-- Data (JSON, etc) -->

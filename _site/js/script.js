@@ -1,3 +1,5 @@
+var start1 = new Date().getTime()
+
 // Set some variables
 var width = parseInt(d3.select("#master_container").style("width")),
   height = width / 2;
@@ -21,7 +23,7 @@ var legend = svg.append("g")
 	.data([500, 2000, 5000])
 	.enter().append("g");
 
-// var 80 = 80;              
+
 
 // load some data
 d3.json("js/us_93_02_v2.json", function(error, us) {
@@ -32,10 +34,6 @@ d3.json("js/us_93_02_v2.json", function(error, us) {
 
 		var data2 = topojson.feature(us, us.objects.us_10m).features
 		// console.log(data2[0].properties)
-
-		// for (var i = 0; i < data2[0].properties.length; i++) {
-		// 	console.log(data2[0].properties)
-		// };
 
 		var typeArray = [[],[],[],[],[],[],[],[]];
 
@@ -88,8 +86,55 @@ d3.json("js/us_93_02_v2.json", function(error, us) {
 				.enter().append("circle")
 				.attr("class", "posB bubble")   
 
+    	// d3.select('#slider6').call(d3.slider().axis(true).min(1993).max(2012).step(1).on("slide", function(evt, value) {
+     //  	// d3.select('#slider3text').text(value);
+     //  	console.log('hello')
+    	// }));			
+			
+
+start_year = 1993;
+// cur_year = 2012;
+var takex;
+var play, slowplay = 0;
+var x;
+var h;
+// var homenum = ["4149","4149","4149","4149","4149","4149","8575","14 K","109 K","146 K","175 K","196 K","225 K","230 K","257 K","294 K","314 K","315 K","317 K","342 K","349 K","357 K","361 K","405 K","579 K","592 K","948 K","1.1 M","1.6 M","1.7 M","2.2 M","2.9 M","4.2 M","6.5 M","8.9 M","10 M","12 M","15 M"];
+
+
+var zoom_bar = new Dragdealer('zoom-bar', {
+	steps: 20,
+	// x: 1,
+  snap: true,
+  animationCallback: function(x, y) {
+    // $('#zoom-bar .value').text(Math.round(x * 100));
+        cur_year = start_year+(x*(num-1))
+        handle.innerHTML = cur_year;
+  }
+});
+// var zoom_bar = new Dragdealer('zoom-bar', {
+//     steps: num,
+//     snap: true,
+//     x: 1,
+//     animationCallback: function(x, y)
+//     {
+//         cur_year = start_year+(x*(num-1))
+//         handle.innerHTML = cur_year;
+//         takex = x;
+//         // removal();
+//         h = x*(num-1);
+        
+//         // buildMap();             
+        
+//     }
+// });
+
+
+
 		// Resize function
 		function resize() {
+
+			// d3.select('#slider6').call(d3.slider().value(1999));
+
 			// resize width
 			var width = parseInt(d3.select("#master_container").style("width")),
 		    height = width / 2;
@@ -160,10 +205,39 @@ d3.json("js/us_93_02_v2.json", function(error, us) {
 			var TheData = topojson.feature(us, us.objects.us_10m).features		
 			// load offshore data, and below do the circle creation but with lat/long instead of a centroid-from-topo
 
-			console.log(TheData)		
+			var gulf = [(path.centroid(TheData[28])[0] - 30),(path.centroid(TheData[28])[1] + 100)]
+			var pac = [(path.centroid(TheData[8])[0] - 75),(path.centroid(TheData[8])[1] + 75)]	
 
-			var gulf = [(path.centroid(TheData[3])[0] + 10),path.centroid(TheData[3])[1]]
-			// console.log(gulf)		
+			svg.selectAll(".gu").data([]).exit().remove();			
+
+		 			for (var datapoint in TheData[0].properties){
+				 	 	if (datapoint == type) {
+				   		// console.log(d.properties.name + " " + datapoint + ": " + d.properties[datapoint])
+				   		// console.log(datapoint)
+				   		// console.log(d.properties[datapoint])
+				   	}
+					}
+
+// create the gulf coast div
+			bubblediv.append("circle")
+				.attr("class", "posB bubble gu")
+	      .attr("transform", function(d) { 
+	        return "translate(" + gulf + ")"; })
+	      .attr("r", function(d) { 		
+					var raw = offshore[0][type] / 1000;
+	        return radius(raw)
+	      })
+	      .attr("text", function(d){ return offshore[0]["name"]});	
+
+	    bubblediv.append("circle")
+				.attr("class", "posB bubble gu")
+	      .attr("transform", function(d) { 
+	        return "translate(" + pac + ")"; })
+	      .attr("r", function(d) { 		
+	      	var raw = offshore[1][type] / 1000;
+	      	return radius(raw)
+	      })
+	      .attr("text", function(d){ return offshore[1]["name"]});	
 
 		// This is a loop
 			svg.selectAll("circle.bubble")
@@ -176,37 +250,17 @@ d3.json("js/us_93_02_v2.json", function(error, us) {
 	        return "translate(" + path.centroid(d) + ")"; })
 	      .attr("r", function(d) { 		
 	      	// Set what we want to look at 
-		 			for (var datapoint in d.properties){
-				 	 	if (datapoint == type) {
-				   		// console.log(d.properties.name + " " + datapoint + ": " + d.properties[datapoint])
-				   		var raw = d.properties[datapoint]
-				   	}
-					}
+		 		// 	for (var datapoint in d.properties){
+				 // 	 	if (datapoint == type) {
+				 //   		var raw = d.properties[datapoint]
+				 //   	}
+					// }
+					var raw = d.properties[type]
 	        return radius(raw)
 	      })
 	      .attr("text", function(d){ return d.properties.id});	
 
-			svg.selectAll(".gu").data([]).exit().remove();
-
-			// create the gulf coast div
-			bubblediv.append("circle")
-				.attr("class", "posB bubble gu")
-	      .attr("transform", function(d) { 
-	        return "translate(" + gulf + ")"; })
-	      .attr("r", function(d) { 		
-	    //   	// Set what we want to look at 
-		 		// 	for (var datapoint in d.properties){
-				 // 	 	if (datapoint == type) {
-				 //   		// console.log(d.properties.name + " " + datapoint + ": " + d.properties[datapoint])
-				 //   		var raw = d.properties[datapoint]
-				 //   	}
-					// }
-	    //     return radius(raw)
-	    return i
-	      })
-	      // .attr("text", function(d){ return d.properties.id});	
-
-		}
+		} //end bubbles function
 
 		// begin looping stuff
 		var num	= 20; //number of iterations, i.e. years
@@ -234,15 +288,17 @@ d3.json("js/us_93_02_v2.json", function(error, us) {
 			rebuildLoop();
 			
 			i += 1;
-			// run three times for now
-			if (i ===num) {			
+		
+			if (i === num) {			
+				var elapsed = new Date().getTime() - start1;
+				console.log(elapsed)
 				clearInterval(play);		 
 			}	
 		}
 
 		function rebuildLoop() {
-			console.log(i)
-
+			// console.log(i)
+			zoom_bar.setValue(i / num);
 			var type = typeArray[k][i]
 
 			BuildBubbles(width,type)
