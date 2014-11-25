@@ -1,5 +1,3 @@
-var start1 = new Date().getTime()
-
 // Set some variables
 var width = parseInt(d3.select("#master_container").style("width")),
   height = width / 2;
@@ -195,8 +193,10 @@ var zoom_bar = new Dragdealer('zoom-bar', {
 		
 		// Tooltips section goes here
 
-		function BuildBubbles(w, type) {
-			
+		function BuildBubbles(w, type) {			
+
+						zoom_bar.setValue(i / num);
+
 			// redifine the radius of circles
 			var radius = d3.scale.sqrt()  
 				.domain([0, 1000])
@@ -210,14 +210,6 @@ var zoom_bar = new Dragdealer('zoom-bar', {
 
 			svg.selectAll(".gu").data([]).exit().remove();			
 
-		 			for (var datapoint in TheData[0].properties){
-				 	 	if (datapoint == type) {
-				   		// console.log(d.properties.name + " " + datapoint + ": " + d.properties[datapoint])
-				   		// console.log(datapoint)
-				   		// console.log(d.properties[datapoint])
-				   	}
-					}
-
 // create the gulf coast div
 			bubblediv.append("circle")
 				.attr("class", "posB bubble gu")
@@ -227,7 +219,7 @@ var zoom_bar = new Dragdealer('zoom-bar', {
 					var raw = offshore[0][type] / 1000;
 	        return radius(raw)
 	      })
-	      .attr("text", function(d){ return offshore[0]["name"]});	
+	      .attr("text", function(d){ return offshore[0]["name"]});				
 
 	    bubblediv.append("circle")
 				.attr("class", "posB bubble gu")
@@ -235,30 +227,17 @@ var zoom_bar = new Dragdealer('zoom-bar', {
 	        return "translate(" + pac + ")"; })
 	      .attr("r", function(d) { 		
 	      	var raw = offshore[1][type] / 1000;
-	      	return radius(raw)
+	      	// return radius(raw)
+	      	return i * 10
 	      })
 	      .attr("text", function(d){ return offshore[1]["name"]});	
 
-		// This is a loop
-			svg.selectAll("circle.bubble")
-	  		.data(TheData
-	        .sort(function(a, b) {        
-	        	return b.properties.total2012 - a.properties.total2012; 
-	        }))
-	      .attr("transform", function(d) { 
+var start1 = new Date().getTime()
 
-	        return "translate(" + path.centroid(d) + ")"; })
-	      .attr("r", function(d) { 		
-	      	// Set what we want to look at 
-		 		// 	for (var datapoint in d.properties){
-				 // 	 	if (datapoint == type) {
-				 //   		var raw = d.properties[datapoint]
-				 //   	}
-					// }
-					var raw = d.properties[type]
-	        return radius(raw)
-	      })
-	      .attr("text", function(d){ return d.properties.id});	
+
+
+			var elapsed = new Date().getTime() - start1;
+			console.log(i + ": " + elapsed)
 
 		} //end bubbles function
 
@@ -272,33 +251,35 @@ var zoom_bar = new Dragdealer('zoom-bar', {
 		var type = typeArray[k][19]  // wher to start
 
 		function start() {
-			play = setInterval(mechanic,300);	
+
+			play = setInterval(mechanic,1000);	
 
 			// play = (function loopingFunction() {
 		 //    mechanic();
 		 //    clearTimeout(loopingFunction);
 		 //    setTimeout(loopingFunction, 300);
 			// })();
+
+
 		}
 
 		// what to do each iteration
 		function mechanic() {
-			
+
 			// console.log(j)	
 			rebuildLoop();
 			
 			i += 1;
 		
 			if (i === num) {			
-				var elapsed = new Date().getTime() - start1;
-				console.log(elapsed)
+
 				clearInterval(play);		 
 			}	
+
 		}
 
 		function rebuildLoop() {
 			// console.log(i)
-			zoom_bar.setValue(i / num);
 			var type = typeArray[k][i]
 
 			BuildBubbles(width,type)
