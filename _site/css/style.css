@@ -139,7 +139,7 @@
   text-anchor: middle;
 }
 
-#slider {
+#tooltip {
   line-height: 1;
   font-weight: bold;
   padding: 12px;
@@ -148,6 +148,21 @@
   border-radius: 2px;
   stroke-width: 1px;
   stroke: #333;
+}
+
+#slideBox, #slider, .sly1 {
+  line-height: 1;
+  font-weight: bold;
+  padding: 12px;
+  fill: #fff;
+  fill-opacity: 0.9;
+  /*border-radius: 2px;
+  stroke-width: 1px;
+  stroke: #333;*/
+}
+
+#slideBox {
+
 }
 
 .tip-text {

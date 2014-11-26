@@ -25,6 +25,8 @@ var legend = svg.append("g")
 d3.json("js/us_93_02_v2.json", function(error, us) {
 	if (error) return console.error(error);
 
+	var TheData = topojson.feature(us, us.objects.us_10m).features		
+
 	d3.json("js/offshore.json", function(error, offshore) {
 		if (error) return console.error(error + "herro error in offshore");
 
@@ -82,8 +84,9 @@ d3.json("js/us_93_02_v2.json", function(error, us) {
 		// Resize function
 		function resize() {			
 
-			// d3.selectAll(".legend").remove();
+			d3.selectAll(".lg").remove();
 			d3.selectAll("#slider").remove();
+			d3.selectAll(".sly1").remove();
 
 			// resize width
 			var width = parseInt(d3.select("#master_container").style("width")),
@@ -107,20 +110,42 @@ d3.json("js/us_93_02_v2.json", function(error, us) {
 					.translate([width / 2, ((height / 2) + 10)])   
 			};	    
 
-			var bottom = height - 100;
-			var left = 0;
+			var margin	= width / 20;
+			var top = 10;
+			var left = margin;
+			var barWidth = width - margin*2;
 
 			var sliderContainer = svg.append("g")
       .attr("id", "slider")
-      // .attr("class", "sly")
+      .attr("class", "sly1")
       .append("rect")
         // .attr("id", "tooltip")
         .attr("transform", function() { 
-          return "translate("+ left + ","+ bottom +")"; })
-        .attr("width", (170))
-        .attr("height", (50))
-        .attr("rx", 6)
-        .attr("ry", 6)
+          return "translate("+ left + ","+ top +")"; })
+        .attr("width", barWidth)
+        .attr("height", (2))
+
+      svg.append("g")
+      	.attr("id", "sliderTick")
+      	.attr("class", "sly1")
+      	.append("rect")
+					.attr("transform", function() { 
+	          return "translate("+ left + ","+ top +")"; })
+	        .attr("width", 2)
+	        .attr("height", 6);
+
+	    svg.append("g")
+      	.attr("id", "sliderTick2")
+      	.attr("class", "sly1")
+      	.append("rect")
+					.attr("transform", function() { 
+	          return "translate("+ (barWidth+ margin) + ","+ top +")"; })
+	        .attr("width", 2)
+	        .attr("height", 6);
+
+			var radius = d3.scale.sqrt()  
+				.domain([0, 1000])
+				.range([(2), (width / 45)]); 
 
 			// create the legend
 			legend.append("circle")
@@ -131,16 +156,22 @@ d3.json("js/us_93_02_v2.json", function(error, us) {
 
 	    // legend.append("text")
 	    //     .text("Btu")
-	    //     .attr("transform", "translate(" + (width - (radius2(10000) + 10)) + "," + (height - 10) + ")");      
+	    //     .attr("transform", "translate(" + (width - (radius2(10000) + 10)) + "," + (height - 10) + ")");      			
+
+			var lgspot = [(path.centroid(TheData[29])[0] + (width / 7)),(path.centroid(TheData[29])[1] + (width / 20))] //using louisiana as reference
 
 			legend        
-				.attr("transform", "translate(" + (width - (radius(10000) + 10)) + "," + (height - 10) + ")");
+				// .attr("transform", "translate(" + (width - (radius(10000) + 10)) + "," + (height + 30) + ")");
+				.attr("transform", function(d) { 
+	        return "translate(" + lgspot + ")"; });
 
 	    legend.selectAll("circle")
+	    	.attr("class","lg")
 	      .attr("cy", function(d) { return -radius(d); })
 	      .attr("r", radius);
 
 	    legend.selectAll("text")
+	    	.attr("class","lg")
 	      .attr("y", function(d) { return -2 * radius(d); }); 
 
 	    // resize paths of states
@@ -163,11 +194,10 @@ d3.json("js/us_93_02_v2.json", function(error, us) {
 				.domain([0, 1000])
 				.range([(2), (w / 45)]); 
 
-			var TheData = topojson.feature(us, us.objects.us_10m).features		
 			// load offshore data, and below do the circle creation but with lat/long instead of a centroid-from-topo
 
-			var gulf = [(path.centroid(TheData[28])[0] - 30),(path.centroid(TheData[28])[1] + 100)]
-			var pac = [(path.centroid(TheData[8])[0] - 75),(path.centroid(TheData[8])[1] + 75)]	
+			var gulf = [(path.centroid(TheData[28])[0] - 30),(path.centroid(TheData[28])[1] + (w / 10))] //using louisiana as reference
+			var pac = [(path.centroid(TheData[8])[0] - (w / 20)),(path.centroid(TheData[8])[1] + (w / 10))]	//using california as reference
 
 			svg.selectAll(".gu").data([]).exit().remove();			
 
@@ -193,7 +223,7 @@ d3.json("js/us_93_02_v2.json", function(error, us) {
 	      })
 	      .attr("text", function(d){ return offshore[1]["name"]});	
 
-var start1 = new Date().getTime()
+			var start1 = new Date().getTime()
 
 		// This is a loop
 			svg.selectAll("circle.bubble")
@@ -210,8 +240,36 @@ var start1 = new Date().getTime()
 	      .attr("text", function(d){ return d.properties.id});	
 
 			var elapsed = new Date().getTime() - start1;
-
+			// console.log(elapsed)
+			
+			var margin	= w / 20;
+			var barWidth = w - margin*2;
+			var barPoint = margin + ((barWidth / 19)*i)
+			// console.log(barWidth)
+			// console.log(barPoint)
 			// Add the year, 
+				
+			// svg.append("g")
+	  //     .attr("id", "slideBox")
+	  //     .attr("class", "sly")
+	  //     .append("rect")
+	  //     .attr("transform", function() { 
+		 //        return "translate("+ (barPoint-22) +",34)"; })
+	  //       .attr("width", 45)
+	  //       .attr("height", 20);	      
+
+			svg
+			// .append("g")
+	      .append("path")
+	      .attr("d", d3.svg.symbol().type("triangle-up"))
+	     	.attr("id", "slideTriangle")
+	      .attr("class", "sly")
+	      .attr("transform", function() { 
+		        return "translate("+ (barPoint + 1) +",24)"; })
+	        .attr("width", 45)
+	        .attr("height", 20);	      	        
+      // .attr("d", d3.svg.symbol().type("triangle-up"))
+
 			svg
 	      .append("text")
 	      .attr("class","tip-text sly")
@@ -219,15 +277,16 @@ var start1 = new Date().getTime()
 	          return i + 1993         
 	      })
 	      .attr("transform", function() { 
-	        return "translate(100,100)"; });
-			} //end bubbles function
+	        return "translate("+ barPoint +",43)"; });	
+
+		} //end bubbles function
 
 		// begin looping stuff
-		var num	= 19; //number of iterations, i.e. years		
+		var num	= 20 //number of iterations, i.e. years		
 		var i = 0; // which year you are on
 		var k = 1; // which type of data you are looking at (total vs crude, etc)
 		// var type = "total2012";
-		var type = typeArray[k][19]  // wher to start
+		var type = typeArray[k][0]  // wher to start
 
 		function start() {
 
@@ -244,15 +303,13 @@ var start1 = new Date().getTime()
 
 		// what to do each iteration
 		function mechanic() {
-
-			rebuildLoop();
-			
-			i += 1;
+			i += 1;					
 		
-			if (i === num) {			
+			rebuildLoop();
 
+			if (i === num) {			
 				clearInterval(play);		 
-			}	
+			}				
 
 		}
 
@@ -268,7 +325,7 @@ var start1 = new Date().getTime()
 	  
 
 	  // start looping
-	  start(); 
+	  // start(); 
 
 	  d3.select(window).on('resize', resize); 
 	  // d3.selectAll("circle.bubble").on('click', tooltip);
