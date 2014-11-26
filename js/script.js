@@ -282,42 +282,35 @@ d3.json("js/us_93_02_v2.json", function(error, us) {
 		} //end bubbles function
 
 		// begin looping stuff
-		var num	= 20 //number of iterations, i.e. years		
+		var num	= 19 //number of iterations, i.e. years		
 		var i = 0; // which year you are on
 		var k = 1; // which type of data you are looking at (total vs crude, etc)
 		// var type = "total2012";
-		var type = typeArray[k][0]  // wher to start
+		var type = typeArray[k][0]  // where to start
 
 		function start() {
 
 			play = setInterval(mechanic,1000);	
-
-			// play = (function loopingFunction() {
-		 //    mechanic();
-		 //    clearTimeout(loopingFunction);
-		 //    setTimeout(loopingFunction, 300);
-			// })();
-
 
 		}
 
 		// what to do each iteration
 		function mechanic() {
 			i += 1;					
-		
-			rebuildLoop();
-
-			if (i === num) {			
-				clearInterval(play);		 
-			}				
+				if (i === num) {			
+					clearInterval(play);		 
+				}		
+					
+			rebuildLoop(i);
 
 		}
 
-		function rebuildLoop() {
-			// console.log(i)
+		function rebuildLoop(i) {
+			
+			// define this type, then send it in
 			var type = typeArray[k][i]
 
-			BuildBubbles(width,type)
+			BuildBubbles(width,type, i)
 		}
 		
 		// initial run
@@ -325,7 +318,7 @@ d3.json("js/us_93_02_v2.json", function(error, us) {
 	  
 
 	  // start looping
-	  // start(); 
+	  start(); 
 
 	  d3.select(window).on('resize', resize); 
 	  // d3.selectAll("circle.bubble").on('click', tooltip);
