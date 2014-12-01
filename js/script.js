@@ -1,3 +1,14 @@
+// (function ($) { 
+// 		//Populate select dropdown menu
+// 		var mySelect = $('#mySelect');
+// 		    $.each(data, function(i) {
+// 		      mySelect.append(
+// 		        $('<option></option>').val(data[i].stateabbrev).html(data[i].state)
+// 		    );
+// 		});
+// }(jQuery));  
+
+
 // Set some variables
 var width = parseInt(d3.select("#master_container").style("width")),
   height = width / 2;
@@ -83,6 +94,8 @@ d3.json("js/us_93_02_v2.json", function(error, us) {
 
 		// Resize function
 		function resize() {			
+
+
 
 			d3.selectAll(".lg").remove();
 			d3.selectAll("#slider").remove();
@@ -180,13 +193,18 @@ d3.json("js/us_93_02_v2.json", function(error, us) {
 
 	  	svg.selectAll('path.state-boundary')
 	  		.attr("d", path);
-
+			
+			//define here instead of there because if global resets it to 0 automatically which is NOT good :)
+			var type = typeArray[k][i]  // where to start
+			
 			BuildBubbles(width, type);
 		}
 		
 		// Tooltips section goes here
 
-		function BuildBubbles(w, type) {			
+		function BuildBubbles(w, type) {		
+			console.log(i)
+			console.log(type)	
 			d3.selectAll(".sly").remove();
 
 			// redifine the radius of circles
@@ -282,11 +300,11 @@ d3.json("js/us_93_02_v2.json", function(error, us) {
 		} //end bubbles function
 
 		// begin looping stuff
-		var num	= 19 //number of iterations, i.e. years		
+		var num	= 3 //number of iterations, i.e. years		
 		var i = 0; // which year you are on
 		var k = 1; // which type of data you are looking at (total vs crude, etc)
 		// var type = "total2012";
-		var type = typeArray[k][0]  // where to start
+
 
 		function start() {
 
@@ -306,7 +324,7 @@ d3.json("js/us_93_02_v2.json", function(error, us) {
 		}
 
 		function rebuildLoop(i) {
-			
+			// console.log(i)
 			// define this type, then send it in
 			var type = typeArray[k][i]
 
