@@ -196,15 +196,18 @@ d3.json("js/us_93_02_v2.json", function(error, us) {
 			
 			//define here instead of there because if global resets it to 0 automatically which is NOT good :)
 			var type = typeArray[k][i]  // where to start
-			
-			BuildBubbles(width, type);
+			var R = 1;
+
+			BuildBubbles(width, type, R);
 		}
 		
 		// Tooltips section goes here
 
-		function BuildBubbles(w, type) {		
-			console.log(i)
-			console.log(type)	
+		function BuildBubbles(w, type, R) {		
+
+			console.log("R: " + R)
+			console.log("i: " + i)
+			console.log("type: " + type)	
 			d3.selectAll(".sly").remove();
 
 			// redifine the radius of circles
@@ -241,7 +244,7 @@ d3.json("js/us_93_02_v2.json", function(error, us) {
 	      })
 	      .attr("text", function(d){ return offshore[1]["name"]});	
 
-			var start1 = new Date().getTime()
+
 
 		// This is a loop
 			svg.selectAll("circle.bubble")
@@ -256,15 +259,12 @@ d3.json("js/us_93_02_v2.json", function(error, us) {
 	        return radius(raw)
 	      })
 	      .attr("text", function(d){ return d.properties.id});	
-
-			var elapsed = new Date().getTime() - start1;
-			// console.log(elapsed)
 			
 			var margin	= w / 20;
 			var barWidth = w - margin*2;
 			var barPoint = margin + ((barWidth / 19)*i)
-			// console.log(barWidth)
-			// console.log(barPoint)
+			console.log("barWidth: " + barWidth)			
+
 			// Add the year, 
 				
 			// svg.append("g")
@@ -300,11 +300,11 @@ d3.json("js/us_93_02_v2.json", function(error, us) {
 		} //end bubbles function
 
 		// begin looping stuff
-		var num	= 3 //number of iterations, i.e. years		
+		var num	= 19 //number of iterations, i.e. years		
 		var i = 0; // which year you are on
 		var k = 1; // which type of data you are looking at (total vs crude, etc)
 		// var type = "total2012";
-
+		var R = 0;
 
 		function start() {
 
@@ -327,8 +327,13 @@ d3.json("js/us_93_02_v2.json", function(error, us) {
 			// console.log(i)
 			// define this type, then send it in
 			var type = typeArray[k][i]
+			
+			// var start1 = new Date().getTime()			
+			var width = parseInt(d3.select("#master_container").style("width"));
+			// var elapsed = new Date().getTime() - start1;
+			// console.log(elapsed)			
 
-			BuildBubbles(width,type, i)
+			BuildBubbles(width, type, R)
 		}
 		
 		// initial run
