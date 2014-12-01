@@ -198,16 +198,15 @@ d3.json("js/us_93_02_v2.json", function(error, us) {
 			var type = typeArray[k][i]  // where to start
 			var R = 1;
 
-			BuildBubbles(width, type, R);
+			BuildBubbles(width, type);
 		}
 		
 		// Tooltips section goes here
 
-		function BuildBubbles(w, type, R) {		
+		function BuildBubbles(w, type) {		
 
-			console.log("R: " + R)
-			console.log("i: " + i)
-			console.log("type: " + type)	
+			// console.log("i: " + i)
+			// console.log("type: " + type)	
 			d3.selectAll(".sly").remove();
 
 			// redifine the radius of circles
@@ -263,7 +262,7 @@ d3.json("js/us_93_02_v2.json", function(error, us) {
 			var margin	= w / 20;
 			var barWidth = w - margin*2;
 			var barPoint = margin + ((barWidth / 19)*i)
-			console.log("barWidth: " + barWidth)			
+			// console.log("barWidth: " + barWidth)			
 
 			// Add the year, 
 				
@@ -303,8 +302,6 @@ d3.json("js/us_93_02_v2.json", function(error, us) {
 		var num	= 19 //number of iterations, i.e. years		
 		var i = 0; // which year you are on
 		var k = 1; // which type of data you are looking at (total vs crude, etc)
-		// var type = "total2012";
-		var R = 0;
 
 		function start() {
 
@@ -328,12 +325,12 @@ d3.json("js/us_93_02_v2.json", function(error, us) {
 			// define this type, then send it in
 			var type = typeArray[k][i]
 			
-			// var start1 = new Date().getTime()			
+			// Wish I didn't have to go to the window EVERY time we build the bubbles. 
+			// Wish i could do it on every change of window, set "globally" till next change...but alas.
 			var width = parseInt(d3.select("#master_container").style("width"));
-			// var elapsed = new Date().getTime() - start1;
-			// console.log(elapsed)			
 
-			BuildBubbles(width, type, R)
+
+			BuildBubbles(width, type)
 		}
 		
 		// initial run
@@ -351,3 +348,6 @@ d3.json("js/us_93_02_v2.json", function(error, us) {
 }); //end states.json
 
 
+// var start1 = new Date().getTime()			
+			// var elapsed = new Date().getTime() - start1;
+			// console.log(elapsed)			
