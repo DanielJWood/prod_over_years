@@ -1,14 +1,3 @@
-// (function ($) { 
-// 		//Populate select dropdown menu
-// 		var mySelect = $('#mySelect');
-// 		    $.each(data, function(i) {
-// 		      mySelect.append(
-// 		        $('<option></option>').val(data[i].stateabbrev).html(data[i].state)
-// 		    );
-// 		});
-// }(jQuery));  
-
-
 // Set some variables
 var width = parseInt(d3.select("#master_container").style("width")),
   height = width / 2;
@@ -40,6 +29,15 @@ d3.json("js/us_93_02_v2.json", function(error, us) {
 
 	d3.json("js/offshore.json", function(error, offshore) {
 		if (error) return console.error(error + "herro error in offshore");
+
+// Do something on the click
+		(function ($) { 
+				$('select').change(function (e){
+					if (i == num) {
+						BuildBubbles(width);
+					};
+				});
+		}(jQuery));  
 
 		var data2 = topojson.feature(us, us.objects.us_10m).features
 
@@ -95,7 +93,8 @@ d3.json("js/us_93_02_v2.json", function(error, us) {
 		// Resize function
 		function resize() {			
 
-
+			//for first load????
+			if (k = "undefined") { k = 1;};
 
 			d3.selectAll(".lg").remove();
 			d3.selectAll("#slider").remove();
@@ -196,7 +195,6 @@ d3.json("js/us_93_02_v2.json", function(error, us) {
 			
 			//define here instead of there because if global resets it to 0 automatically which is NOT good :)
 			var type = typeArray[k][i]  // where to start
-			var R = 1;
 
 			BuildBubbles(width, type);
 		}
@@ -204,9 +202,22 @@ d3.json("js/us_93_02_v2.json", function(error, us) {
 		// Tooltips section goes here
 
 		function BuildBubbles(w, type) {		
+			var gotype = $("select").val()
 
-			// console.log("i: " + i)
-			// console.log("type: " + type)	
+			if (gotype == "to") { var k = 1} 
+			else if (gotype == "co") { var k = 2} 
+			else if (gotype == "cr") { var k = 3} 
+			else if (gotype == "na") { var k = 4} 
+			else if (gotype == "tr") { var k = 5} 
+			else if (gotype == "or") { var k = 6} 
+			else if (gotype == "bi") { var k = 8} 
+			else if (gotype == "nu") { var k = 7}
+			else {
+				// console.log('error')
+			}
+
+			var type = typeArray[k][i]
+
 			d3.selectAll(".sly").remove();
 
 			// redifine the radius of circles
@@ -221,7 +232,7 @@ d3.json("js/us_93_02_v2.json", function(error, us) {
 
 			svg.selectAll(".gu").data([]).exit().remove();			
 
-// create the gulf coast div
+			// create the gulf coast div
 			bubblediv.append("circle")
 				.attr("class", "posB bubble gu")
 	      .attr("transform", function(d) { 
@@ -243,8 +254,6 @@ d3.json("js/us_93_02_v2.json", function(error, us) {
 	      })
 	      .attr("text", function(d){ return offshore[1]["name"]});	
 
-
-
 		// This is a loop
 			svg.selectAll("circle.bubble")
 	  		.data(topojson.feature(us, us.objects.us_10m).features		
@@ -261,19 +270,7 @@ d3.json("js/us_93_02_v2.json", function(error, us) {
 			
 			var margin	= w / 20;
 			var barWidth = w - margin*2;
-			var barPoint = margin + ((barWidth / 19)*i)
-			// console.log("barWidth: " + barWidth)			
-
-			// Add the year, 
-				
-			// svg.append("g")
-	  //     .attr("id", "slideBox")
-	  //     .attr("class", "sly")
-	  //     .append("rect")
-	  //     .attr("transform", function() { 
-		 //        return "translate("+ (barPoint-22) +",34)"; })
-	  //       .attr("width", 45)
-	  //       .attr("height", 20);	      
+			var barPoint = margin + ((barWidth / num)*i)
 
 			svg
 			// .append("g")
@@ -300,13 +297,11 @@ d3.json("js/us_93_02_v2.json", function(error, us) {
 
 		// begin looping stuff
 		var num	= 19 //number of iterations, i.e. years		
-		var i = 0; // which year you are on
-		var k = 1; // which type of data you are looking at (total vs crude, etc)
+		var i = 0; // which year you are on when you start 
+		// var k = 1; // which type of data you are looking at (total vs crude, etc)
 
 		function start() {
-
 			play = setInterval(mechanic,1000);	
-
 		}
 
 		// what to do each iteration
@@ -314,14 +309,11 @@ d3.json("js/us_93_02_v2.json", function(error, us) {
 			i += 1;					
 				if (i === num) {			
 					clearInterval(play);		 
-				}		
-					
+				}							
 			rebuildLoop(i);
-
 		}
 
-		function rebuildLoop(i) {
-			// console.log(i)
+		function rebuildLoop(i) {			
 			// define this type, then send it in
 			var type = typeArray[k][i]
 			
@@ -329,20 +321,17 @@ d3.json("js/us_93_02_v2.json", function(error, us) {
 			// Wish i could do it on every change of window, set "globally" till next change...but alas.
 			var width = parseInt(d3.select("#master_container").style("width"));
 
-
 			BuildBubbles(width, type)
 		}
 		
 		// initial run
-	  resize(); 	    	
-	  
+	  resize(); 	    		  
 
 	  // start looping
 	  start(); 
 
 	  d3.select(window).on('resize', resize); 
 	  // d3.selectAll("circle.bubble").on('click', tooltip);
-
 
 	}); //end offshore.json
 }); //end states.json
