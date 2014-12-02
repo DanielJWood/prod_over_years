@@ -34,6 +34,10 @@ d3.json("js/us_93_02_v2.json", function(error, us) {
 		(function ($) { 
 				$('select').change(function (e){
 					if (i == num) {
+						// resize();
+
+						var width = parseInt(d3.select("#master_container").style("width"));
+
 						BuildBubbles(width);
 					};
 				});
@@ -296,7 +300,7 @@ d3.json("js/us_93_02_v2.json", function(error, us) {
 		} //end bubbles function
 
 		// begin looping stuff
-		var num	= 19 //number of iterations, i.e. years		
+		var num	= 3 //number of iterations, i.e. years		
 		var i = 0; // which year you are on when you start 
 		// var k = 1; // which type of data you are looking at (total vs crude, etc)
 
