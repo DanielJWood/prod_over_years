@@ -28,16 +28,13 @@ d3.json("js/us_93_02_v2.json", function(error, us) {
 	var TheData = topojson.feature(us, us.objects.us_10m).features		
 
 	d3.json("js/offshore.json", function(error, offshore) {
-		if (error) return console.error(error + "herro error in offshore");
+		if (error) return console.error(error + "error in offshore");
 
-// Do something on the click
+		// Do something on the click of selector
 		(function ($) { 
 				$('select').change(function (e){
 					if (i == num) {
-						// resize();
-
 						var width = parseInt(d3.select("#master_container").style("width"));
-
 						BuildBubbles(width);
 					};
 				});
@@ -103,6 +100,7 @@ d3.json("js/us_93_02_v2.json", function(error, us) {
 			d3.selectAll(".lg").remove();
 			d3.selectAll("#slider").remove();
 			d3.selectAll(".sly1").remove();
+			d3.selectAll(".rpt").remove();
 
 			// resize width
 			var width = parseInt(d3.select("#master_container").style("width")),
@@ -129,17 +127,29 @@ d3.json("js/us_93_02_v2.json", function(error, us) {
 			var margin	= width / 20;
 			var top = 10;
 			var left = margin;
-			var barWidth = width - margin*2;
+			var boxWidth = 40;
+			var boxMargin = margin*1.5;
+			var boxSegment = boxWidth + (boxMargin);
+			var barWidth = width - margin - boxSegment;
+
+			var repeat = svg.append("g")
+				.attr("class", "rpt")
+				.attr("id", "repeater")
+				.append("rect")
+					.attr("transform", function() { 
+	          return "translate("+ (barWidth + margin + (boxMargin / 2)) + ","+ top +")"; })
+	        .attr("width", boxWidth)
+	        .attr("height", boxWidth);
 
 			var sliderContainer = svg.append("g")
-      .attr("id", "slider")
-      .attr("class", "sly1")
-      .append("rect")
-        // .attr("id", "tooltip")
-        .attr("transform", function() { 
-          return "translate("+ left + ","+ top +")"; })
-        .attr("width", barWidth)
-        .attr("height", (2))
+	      .attr("id", "slider")
+	      .attr("class", "sly1")
+	      .append("rect")
+	        // .attr("id", "tooltip")
+	        .attr("transform", function() { 
+	          return "translate("+ left + ","+ top +")"; })
+	        .attr("width", barWidth)
+	        .attr("height", (2))
 
       svg.append("g")
       	.attr("id", "sliderTick")
@@ -155,7 +165,7 @@ d3.json("js/us_93_02_v2.json", function(error, us) {
       	.attr("class", "sly1")
       	.append("rect")
 					.attr("transform", function() { 
-	          return "translate("+ (barWidth+ margin) + ","+ top +")"; })
+	          return "translate("+ (barWidth + margin) + ","+ top +")"; })
 	        .attr("width", 2)
 	        .attr("height", 6);
 
@@ -273,7 +283,13 @@ d3.json("js/us_93_02_v2.json", function(error, us) {
 	      .attr("text", function(d){ return d.properties.id});	
 			
 			var margin	= w / 20;
-			var barWidth = w - margin*2;
+			// var barWidth = w - margin*2 - 50;
+
+
+			var boxWidth = 40;
+			var boxMargin = margin*1.5;
+			var boxSegment = boxWidth + (boxMargin);
+			var barWidth = w - margin - boxSegment;
 			var barPoint = margin + ((barWidth / num)*i)
 
 			svg
@@ -303,19 +319,41 @@ d3.json("js/us_93_02_v2.json", function(error, us) {
 		var num	= 3 //number of iterations, i.e. years		
 		var i = 0; // which year you are on when you start 
 		// var k = 1; // which type of data you are looking at (total vs crude, etc)
+		var play;
 
 		function start() {
+
+		if (play != "undefined") {
+			clearInterval(play);	
+		};
+			
+			if (i === num) {
+				i -= (num+1);
+			};			
 			play = setInterval(mechanic,1000);	
 		}
 
 		// what to do each iteration
-		function mechanic() {
-			i += 1;					
-				if (i === num) {			
+		function mechanic() {			
+				i += 1;					
+			
+			if (i === num) {			
 					clearInterval(play);		 
 				}							
 			rebuildLoop(i);
 		}
+
+		// function mechanic() {
+		// 	if (i != num) {
+		// 		i += 1;					
+		// 	} else if (i === num) {			
+								
+		// 		clearInterval(play);	
+		// 		i -= num;	 
+		// 	}							
+		// 	console.log(i)
+		// 	rebuildLoop(i);
+		// }
 
 		function rebuildLoop(i) {			
 			// define this type, then send it in
@@ -336,6 +374,7 @@ d3.json("js/us_93_02_v2.json", function(error, us) {
 
 	  d3.select(window).on('resize', resize); 
 	  // d3.selectAll("circle.bubble").on('click', tooltip);
+	  d3.selectAll(".rpt").on('click', start);
 
 	}); //end offshore.json
 }); //end states.json
