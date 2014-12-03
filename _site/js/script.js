@@ -93,7 +93,6 @@ d3.json("js/us_93_02_v2.json", function(error, us) {
 
 		// Resize function
 		function resize() {			
-
 			//for first load????
 			if (k = "undefined") { k = 1;};
 
@@ -117,6 +116,7 @@ d3.json("js/us_93_02_v2.json", function(error, us) {
 					.scale(width * 1.2)
 					.translate([width / 2, ((height / 2) + 30)])             
 			} 
+
 			// full viewport
 			else {
 				projection
@@ -253,7 +253,11 @@ d3.json("js/us_93_02_v2.json", function(error, us) {
 	        return "translate(" + gulf + ")"; })
 	      .attr("r", function(d) { 		
 					var raw = offshore[0][type] / 1000;
-	        return radius(raw)
+	       	if (raw === 0) {
+	      		return 0;
+	      	} else {
+	      		return radius(raw);
+	      	};
 	      })
 	      .attr("text", function(d){ return offshore[0]["name"]});				
 
@@ -263,8 +267,12 @@ d3.json("js/us_93_02_v2.json", function(error, us) {
 	        return "translate(" + pac + ")"; })
 	      .attr("r", function(d) { 		
 	      	var raw = offshore[1][type] / 1000;
-	      	return radius(raw)
-	      	// return i * 10
+
+	       	if (raw === 0) {
+	      		return 0;
+	      	} else {
+	      		return radius(raw);
+	      	};	      	
 	      })
 	      .attr("text", function(d){ return offshore[1]["name"]});	
 
@@ -277,8 +285,15 @@ d3.json("js/us_93_02_v2.json", function(error, us) {
 	      .attr("transform", function(d) { 
 	        return "translate(" + path.centroid(d) + ")"; })
 	      .attr("r", function(d) { 		
-					var raw = d.properties[type]
-	        return radius(raw)
+	      	var raw = d.properties[type]
+
+	      	if (raw === 0) {
+	      		return 0;
+	      	} else {
+	      		return radius(raw);
+	      	};
+					
+	        
 	      })
 	      .attr("text", function(d){ return d.properties.id});	
 			
@@ -316,7 +331,7 @@ d3.json("js/us_93_02_v2.json", function(error, us) {
 		} //end bubbles function
 
 		// begin looping stuff
-		var num	= 3 //number of iterations, i.e. years		
+		var num	= 19 //number of iterations, i.e. years		
 		var i = 0; // which year you are on when you start 
 		// var k = 1; // which type of data you are looking at (total vs crude, etc)
 		var play;
@@ -342,18 +357,6 @@ d3.json("js/us_93_02_v2.json", function(error, us) {
 				}							
 			rebuildLoop(i);
 		}
-
-		// function mechanic() {
-		// 	if (i != num) {
-		// 		i += 1;					
-		// 	} else if (i === num) {			
-								
-		// 		clearInterval(play);	
-		// 		i -= num;	 
-		// 	}							
-		// 	console.log(i)
-		// 	rebuildLoop(i);
-		// }
 
 		function rebuildLoop(i) {			
 			// define this type, then send it in
