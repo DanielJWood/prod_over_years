@@ -291,9 +291,7 @@ d3.json("js/us_93_02_v2.json", function(error, us) {
 	      		return 0;
 	      	} else {
 	      		return radius(raw);
-	      	};
-					
-	        
+	      	};						        
 	      })
 	      .attr("text", function(d){ return d.properties.id});	
 			
@@ -329,6 +327,134 @@ d3.json("js/us_93_02_v2.json", function(error, us) {
 	        return "translate("+ barPoint +",43)"; });	
 
 		} //end bubbles function
+
+
+	// create the tooltip
+	function tooltip(d) {     
+
+		var gotype = $("select").val()
+
+		if (gotype == "to") { var k = 1; var gotypename = "Total Energy Produced"} 
+		else if (gotype == "co") { var k = 2; var gotypename = "Coal"} 
+		else if (gotype == "cr") { var k = 3; var gotypename = "Crude Oil"} 
+		else if (gotype == "na") { var k = 4; var gotypename = "Natural Gas"} 
+		else if (gotype == "tr") { var k = 5; var gotypename = "Total Renewable Energy"} 
+		else if (gotype == "or") { var k = 6; var gotypename = "Other Renewable Energy"} 
+		else if (gotype == "bi") { var k = 8; var gotypename = "Biofuels"} 
+		else if (gotype == "nu") { var k = 7; var gotypename = "Nuclear Power"}
+		else {
+			// console.log('error')
+		}
+
+		console.log(k);
+		var type = typeArray[k][i]
+
+		// grab the width to define breakpoints
+		width = parseInt(d3.select("#master_container").style("width"))
+
+		// Remove everything and start over.
+    d3.selectAll(".tool").remove();
+
+    // store the data
+		var data = d;
+    centroid = path.centroid(data);
+
+    // where it hangs based on view size
+    if (width > 900) {
+      if (centroid[1] < 250) {
+        centroid_adjusted = [(centroid[0]-85),(centroid[1]+25)];
+      } else {
+        centroid_adjusted = [(centroid[0]-85),(centroid[1]-80)];
+      };        
+    }
+    else if (width > 700) {  
+      if (centroid[1] < 225) {
+        centroid_adjusted = [(centroid[0]-85),(centroid[1]+25)];
+      } else {
+        centroid_adjusted = [(centroid[0]-85),(centroid[1]-80)];
+      };
+    }
+    else if (width > 480) {
+      if (centroid[0] < width / 2) {
+        centroid_adjusted = [(width - 175),(5)];        
+      } else {
+        centroid_adjusted = [(5),(5)];               
+      };
+    } else {
+      if (centroid[0] < 200) {
+        centroid_adjusted = [(width - 175),(5)];        
+      } else {
+        centroid_adjusted = [(5),(5)];               
+      };
+    };    
+
+    // where it hangs within the tip
+    tip_text  = [(centroid_adjusted[0] + 80 + 5),(centroid_adjusted[1] + 20)];
+    tip_text2  = [(centroid_adjusted[0] + 80 + 5),(centroid_adjusted[1] + 40)];
+    tip_close = [(centroid_adjusted[0] + 80*2),(centroid_adjusted[1]+(15))];
+
+    // build the rectangle
+    var tooltipContainer = svg.append("g")
+      .attr("id", "tooltip")
+      .attr("class", "tool")
+      .append("rect")
+        // .attr("id", "tooltip")
+        .attr("transform", function() { 
+          return "translate(" + centroid_adjusted + ")"; })
+        .attr("width", (170))
+        .attr("height", (60))
+        .attr("rx", 6)
+        .attr("ry", 6)
+  	
+  	// tip texts
+    svg
+      .append("text")
+      .attr("class","tip-text tool")
+      .text(function(d){
+          return data.properties.name;          
+      })
+      .attr("transform", function() { 
+        return "translate(" + tip_text + ")"; });
+
+    var toolbody = svg
+      .append("text")
+      .attr("class","tip-text2 tool")
+      .attr("transform", function() { 
+        return "translate(" + tip_text2 + ")"; });
+
+    toolbody.append("tspan")
+      .text(function(d){
+        return gotypename + ":";
+      })
+      .attr("x",0)
+      .attr("y",0);
+
+    toolbody.append("tspan")
+      .text(function(d){
+        var raw = data.properties[type]        
+        return raw + " Trillion Btu";
+      })
+      .attr("x",0)
+      .attr("y",15);
+;
+      
+
+
+
+
+
+
+    svg.append("g")
+      .attr("class", "closer tool")
+      .attr("transform", function(){
+        return "translate(" + tip_close + ")";
+      })
+        .append("text")
+        .attr("class", "tip-text2 tool")
+        .text("X").on("click", function(){
+        	d3.selectAll(".tool").remove();
+        });
+	}
 
 		// begin looping stuff
 		var num	= 19 //number of iterations, i.e. years		
@@ -376,7 +502,7 @@ d3.json("js/us_93_02_v2.json", function(error, us) {
 	  start(); 
 
 	  d3.select(window).on('resize', resize); 
-	  // d3.selectAll("circle.bubble").on('click', tooltip);
+	  d3.selectAll("circle.bubble").on('click', tooltip);
 	  d3.selectAll(".rpt").on('click', start);
 
 	}); //end offshore.json

@@ -1,5 +1,5 @@
 
-	create the tooltip
+//	create the tooltip
 	function tooltip(d) {     
 		// grab the width to define breakpoints
 		width = parseInt(d3.select("#master_container").style("width"))
@@ -72,7 +72,8 @@
       .append("text")
       .attr("class","tip-text2 tool")
       .text(function(d){
-          return "Total: " + data.properties.total2012 + " Trillion Btu";
+        raw = data.properties.total2012
+        return "Total: " + raw + " Trillion Btu";
       })
       .attr("transform", function() { 
         return "translate(" + tip_text2 + ")"; });
