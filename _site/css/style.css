@@ -1,4 +1,8 @@
-
+ #dis1  h1,  #dis1 h2,  #dis1 h3,  #dis1 h4, #dis1  p {
+  border-bottom: none !important;
+/*  padding: 0px !important;
+  margin: 0px !important;*/
+}
 
 #sidebar-right{display:none !important;}.sidebar-second #main-content{width:100% !important;}
 
@@ -210,6 +214,45 @@ cursor: pointer;
 .arc :hover {
   cursor: pointer;
   fill-opacity: 0.8;
+}
+
+/*selector*/
+
+#selectBox {
+  padding-top: 10px;
+  padding-bottom: 10px;
+  text-align: center;
+  background-color: #ddd;
+}
+
+#totalDiv h2 {
+  font-size: 20px;
+  padding-top: 5px;
+  padding-left: 5px;
+  color: #333;
+  line-height: 30px;
+}
+
+#totalDiv h3 {
+  font-size: 30px;
+  padding-top: 5px;
+  padding-left: 5px;
+  color: #333;
+  line-height: 14px;
+  margin: 0px;
+  padding-bottom: 0px !important;
+  border-bottom: none !important;
+  margin-bottom: 0px !important;
+}
+
+/*Repeater*/
+
+#repeater {
+  cursor:  pointer;
+    stroke: #333;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+  stroke-width: 1px;
 }
 
 /*Responsive*/

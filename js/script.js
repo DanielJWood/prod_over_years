@@ -1,3 +1,6 @@
+var totalDiv = document.getElementById('totalDiv')
+
+
 // Set some variables
 var width = parseInt(d3.select("#master_container").style("width")),
   height = width / 2;
@@ -21,13 +24,29 @@ var legend = svg.append("g")
 	.data([500, 2000, 5000])
 	.enter().append("g");
 
+var imgWidth = 50;
+var imgHeight = 50;
+
+var defs = svg.append("defs")
+  .attr("id","mdef")
+    
+var pattern = defs.append("pattern")
+  .attr("height",imgHeight)
+  .attr("width",imgWidth)
+  .attr("id","imageID1")
+  .append("svg:image")
+    .attr("width",imgWidth - 10)
+    .attr("height",imgHeight - 10)
+    .attr("xlink:href", "http://energy.gov/sites/prod/files/arrow_160.png");
+
+
 // load some data
-d3.json("js/us_93_02_v2.json", function(error, us) {
+d3.json("js/us_93_02_v3.json", function(error, us) {
 	if (error) return console.error(error);
 
 	var TheData = topojson.feature(us, us.objects.us_10m).features		
 
-	d3.json("js/offshore.json", function(error, offshore) {
+	d3.json("js/offshore2.json", function(error, offshore) {
 		if (error) return console.error(error + "error in offshore");
 
 		// Do something on the click of selector
@@ -42,7 +61,7 @@ d3.json("js/us_93_02_v2.json", function(error, us) {
 
 		var data2 = topojson.feature(us, us.objects.us_10m).features
 
-		var typeArray = [[],[],[],[],[],[],[],[]];
+		var typeArray = [[],[],[],[],[],[],[],[],[]];
 
 		for (var datapoint in data2[0].properties){
 	
@@ -69,7 +88,11 @@ d3.json("js/us_93_02_v2.json", function(error, us) {
 	 		}
 	 		else if (datapoint.substring(2,0) == "nu") {
 	 			typeArray[7].push(datapoint)
-	 		};
+	 		}
+	 		else if (datapoint.substring(2,0) == "bi") {
+	 			typeArray[8].push(datapoint)	
+	 		}
+	 		;
 	 	}
 
 		//build a map outside of resize
@@ -89,7 +112,7 @@ d3.json("js/us_93_02_v2.json", function(error, us) {
 			bubblediv.selectAll("circle")
 				.data(topojson.feature(us, us.objects.us_10m).features)
 				.enter().append("circle")
-				.attr("class", "posB bubble")   
+				.attr("class", "bubble")   
 
 		// Resize function
 		function resize() {			
@@ -135,11 +158,14 @@ d3.json("js/us_93_02_v2.json", function(error, us) {
 			var repeat = svg.append("g")
 				.attr("class", "rpt")
 				.attr("id", "repeater")
-				.append("rect")
+				.append("rect")					
 					.attr("transform", function() { 
 	          return "translate("+ (barWidth + margin + (boxMargin / 2)) + ","+ top +")"; })
 	        .attr("width", boxWidth)
-	        .attr("height", boxWidth);
+	        .attr("height", boxWidth)
+		      .style("fill", "transparent")       // this code works OK
+		      .style("fill", "url(#imageID1)");   
+
 
 			var sliderContainer = svg.append("g")
 	      .attr("id", "slider")
@@ -217,22 +243,29 @@ d3.json("js/us_93_02_v2.json", function(error, us) {
 
 		function BuildBubbles(w, type) {		
 			var gotype = $("select").val()
+			
+		if (gotype == "to") { var k = 1; var gotypename = "Total Energy Produced"} 
+		else if (gotype == "co") { var k = 2; var gotypename = "Coal"} 
+		else if (gotype == "cr") { var k = 3; var gotypename = "Crude Oil"} 
+		else if (gotype == "na") { var k = 4; var gotypename = "Natural Gas"} 
+		else if (gotype == "tr") { var k = 5; var gotypename = "Total Renewable Energy"} 
+		else if (gotype == "or") { var k = 6; var gotypename = "Other Renewable Energy"} 
+		else if (gotype == "bi") { var k = 8; var gotypename = "Biofuels"; console.log('yes')} 
+		else if (gotype == "nu") { var k = 7; var gotypename = "Nuclear Power"}
+		else {
+			// console.log('error')
+		}
 
-			if (gotype == "to") { var k = 1} 
-			else if (gotype == "co") { var k = 2} 
-			else if (gotype == "cr") { var k = 3} 
-			else if (gotype == "na") { var k = 4} 
-			else if (gotype == "tr") { var k = 5} 
-			else if (gotype == "or") { var k = 6} 
-			else if (gotype == "bi") { var k = 8} 
-			else if (gotype == "nu") { var k = 7}
-			else {
-				// console.log('error')
-			}
+// need to add in Biofuels
 
 			var type = typeArray[k][i]
+    	var USA = numberWithCommas(Math.round((offshore[2][type]/1000)))
 
 			d3.selectAll(".sly").remove();
+
+
+			// Redo the header info
+			totalDiv.innerHTML = '<h2>' + gotypename + '</h2><h3>' + USA + ' Trillion BTU</h3>'
 
 			// redifine the radius of circles
 			var radius = d3.scale.sqrt()  
@@ -245,36 +278,6 @@ d3.json("js/us_93_02_v2.json", function(error, us) {
 			var pac = [(path.centroid(TheData[8])[0] - (w / 20)),(path.centroid(TheData[8])[1] + (w / 10))]	//using california as reference
 
 			svg.selectAll(".gu").data([]).exit().remove();			
-
-			// create the gulf coast div
-			bubblediv.append("circle")
-				.attr("class", "posB bubble gu")
-	      .attr("transform", function(d) { 
-	        return "translate(" + gulf + ")"; })
-	      .attr("r", function(d) { 		
-					var raw = offshore[0][type] / 1000;
-	       	if (raw === 0) {
-	      		return 0;
-	      	} else {
-	      		return radius(raw);
-	      	};
-	      })
-	      .attr("text", function(d){ return offshore[0]["name"]});				
-
-	    bubblediv.append("circle")
-				.attr("class", "posB bubble gu")
-	      .attr("transform", function(d) { 
-	        return "translate(" + pac + ")"; })
-	      .attr("r", function(d) { 		
-	      	var raw = offshore[1][type] / 1000;
-
-	       	if (raw === 0) {
-	      		return 0;
-	      	} else {
-	      		return radius(raw);
-	      	};	      	
-	      })
-	      .attr("text", function(d){ return offshore[1]["name"]});	
 
 		// This is a loop
 			svg.selectAll("circle.bubble")
@@ -295,6 +298,37 @@ d3.json("js/us_93_02_v2.json", function(error, us) {
 	      })
 	      .attr("text", function(d){ return d.properties.id});	
 			
+			// create the gulf coast div
+			bubblediv.append("circle")
+				.attr("class", "bubble gu")
+	      .attr("transform", function(d) { 
+	        return "translate(" + gulf + ")"; })
+	      .attr("r", function(d) { 		
+					var raw = offshore[0][type] / 1000;
+	       	if (raw === 0) {
+	      		return 0;
+	      	} else {
+	      		return radius(raw);
+	      	};
+	      })
+	      .attr("text", function(d){ return offshore[0]["name"]});				
+
+	    bubblediv.append("circle")
+				.attr("class", "bubble gu")
+	      .attr("transform", function(d) { 
+	        return "translate(" + pac + ")"; })
+	      .attr("r", function(d) { 		
+	      	var raw = offshore[1][type] / 1000;
+	       	if (raw === 0) {
+	      		return 0;
+	      	} else {
+	      		return radius(raw);
+	      	};	      	
+	      })
+	      .attr("text", function(d){ return offshore[1]["name"]});	
+
+
+
 			var margin	= w / 20;
 			// var barWidth = w - margin*2 - 50;
 
@@ -328,10 +362,8 @@ d3.json("js/us_93_02_v2.json", function(error, us) {
 
 		} //end bubbles function
 
-
 	// create the tooltip
-	function tooltip(d) {     
-
+	function tooltip(d) {         
 		var gotype = $("select").val()
 
 		if (gotype == "to") { var k = 1; var gotypename = "Total Energy Produced"} 
@@ -346,7 +378,6 @@ d3.json("js/us_93_02_v2.json", function(error, us) {
 			// console.log('error')
 		}
 
-		console.log(k);
 		var type = typeArray[k][i]
 
 		// grab the width to define breakpoints
@@ -390,7 +421,7 @@ d3.json("js/us_93_02_v2.json", function(error, us) {
 
     // where it hangs within the tip
     tip_text  = [(centroid_adjusted[0] + 80 + 5),(centroid_adjusted[1] + 20)];
-    tip_text2  = [(centroid_adjusted[0] + 80 + 5),(centroid_adjusted[1] + 40)];
+    tip_text2  = [(centroid_adjusted[0] + 80 + 5),(centroid_adjusted[1] + 35)];
     tip_close = [(centroid_adjusted[0] + 80*2),(centroid_adjusted[1]+(15))];
 
     // build the rectangle
@@ -402,7 +433,7 @@ d3.json("js/us_93_02_v2.json", function(error, us) {
         .attr("transform", function() { 
           return "translate(" + centroid_adjusted + ")"; })
         .attr("width", (170))
-        .attr("height", (60))
+        .attr("height", (55))
         .attr("rx", 6)
         .attr("ry", 6)
   	
@@ -436,13 +467,6 @@ d3.json("js/us_93_02_v2.json", function(error, us) {
       })
       .attr("x",0)
       .attr("y",15);
-;
-      
-
-
-
-
-
 
     svg.append("g")
       .attr("class", "closer tool")
@@ -503,7 +527,13 @@ d3.json("js/us_93_02_v2.json", function(error, us) {
 
 	  d3.select(window).on('resize', resize); 
 	  d3.selectAll("circle.bubble").on('click', tooltip);
+	  // d3.selectAll(".bubbles").on('click', tooltip);
 	  d3.selectAll(".rpt").on('click', start);
+
+	  //function to add commas
+		function numberWithCommas(x) {
+		  return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+		}
 
 	}); //end offshore.json
 }); //end states.json
