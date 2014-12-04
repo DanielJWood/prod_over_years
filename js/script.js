@@ -108,11 +108,20 @@ d3.json("js/us_93_02_v3.json", function(error, us) {
 		var bubblediv = svg.append("g")
 			.attr("class", "bubbles")
 
+		var bubblediv2 = svg.append("g")
+			.attr("class", "bubbles2")
+				.append("circle")
+				.attr("class", "bubble2")  ;
 
-			bubblediv.selectAll("circle")
-				.data(topojson.feature(us, us.objects.us_10m).features)
-				.enter().append("circle")
-				.attr("class", "bubble")   
+		var bubblediv3 = svg.append("g")
+			.attr("class", "bubbles3")
+				.append("circle")
+				.attr("class", "bubble3");
+
+		bubblediv.selectAll("circle")
+			.data(topojson.feature(us, us.objects.us_10m).features)
+			.enter().append("circle")
+			.attr("class", "bubble")   
 
 		// Resize function
 		function resize() {			
@@ -277,7 +286,7 @@ d3.json("js/us_93_02_v3.json", function(error, us) {
 			var gulf = [(path.centroid(TheData[28])[0] - 30),(path.centroid(TheData[28])[1] + (w / 10))] //using louisiana as reference
 			var pac = [(path.centroid(TheData[8])[0] - (w / 20)),(path.centroid(TheData[8])[1] + (w / 10))]	//using california as reference
 
-			svg.selectAll(".gu").data([]).exit().remove();			
+			// svg.selectAll(".gu").data([]).exit().remove();			
 
 		// This is a loop
 			svg.selectAll("circle.bubble")
@@ -299,8 +308,8 @@ d3.json("js/us_93_02_v3.json", function(error, us) {
 	      .attr("text", function(d){ return d.properties.id});	
 			
 			// create the gulf coast div
-			bubblediv.append("circle")
-				.attr("class", "bubble gu")
+			svg.selectAll("circle.bubble2")
+				// .attr("class", "gu")
 	      .attr("transform", function(d) { 
 	        return "translate(" + gulf + ")"; })
 	      .attr("r", function(d) { 		
@@ -311,10 +320,16 @@ d3.json("js/us_93_02_v3.json", function(error, us) {
 	      		return radius(raw);
 	      	};
 	      })
-	      .attr("text", function(d){ return offshore[0]["name"]});				
+	      .attr("j", 0)
+	      .attr("text", function(d){ 
+	      	return offshore[0]["StateName"]
+	      })
+	      .text(function(d){ 
+	      	return offshore[0]["StateName"]
+	      });				
 
-	    bubblediv.append("circle")
-				.attr("class", "bubble gu")
+	    svg.selectAll("circle.bubble3")
+				// .attr("class", "gu")
 	      .attr("transform", function(d) { 
 	        return "translate(" + pac + ")"; })
 	      .attr("r", function(d) { 		
@@ -325,7 +340,13 @@ d3.json("js/us_93_02_v3.json", function(error, us) {
 	      		return radius(raw);
 	      	};	      	
 	      })
-	      .attr("text", function(d){ return offshore[1]["name"]});	
+	      .attr("j", 1)
+	      .attr("text", function(d){
+		       return offshore[1]["StateName"]
+		     })
+	      .text(function(d){ 
+	      	return offshore[1]["StateName"]
+	      });	;	
 
 
 
@@ -386,10 +407,26 @@ d3.json("js/us_93_02_v3.json", function(error, us) {
 		// Remove everything and start over.
     d3.selectAll(".tool").remove();
 
-    // store the data
-		var data = d;
-    centroid = path.centroid(data);
+    
 
+// store the data
+	var data = d;
+    if (this.className.animVal != "bubble" ) {
+    	centroid = [(this.transform.animVal[0].matrix.e), (this.transform.animVal[0].matrix.f)]    	
+    	toolName = this.innerHTML;
+    	if (toolName === "Gulf of Mexico") {
+    		j = 0;
+    	}
+    	else if (toolName === "Pacific") {
+   			j = 1;
+    	};    	
+    	raw = offshore[j][type] / 1000;
+    } else {
+    	centroid = path.centroid(data);
+    	toolName = data.properties.name;       
+    	raw = data.properties[type]    
+    };
+   
     // where it hangs based on view size
     if (width > 900) {
       if (centroid[1] < 250) {
@@ -442,7 +479,7 @@ d3.json("js/us_93_02_v3.json", function(error, us) {
       .append("text")
       .attr("class","tip-text tool")
       .text(function(d){
-          return data.properties.name;          
+          return toolName;
       })
       .attr("transform", function() { 
         return "translate(" + tip_text + ")"; });
@@ -462,7 +499,7 @@ d3.json("js/us_93_02_v3.json", function(error, us) {
 
     toolbody.append("tspan")
       .text(function(d){
-        var raw = data.properties[type]        
+               
         return raw + " Trillion Btu";
       })
       .attr("x",0)
@@ -527,8 +564,17 @@ d3.json("js/us_93_02_v3.json", function(error, us) {
 
 	  d3.select(window).on('resize', resize); 
 	  d3.selectAll("circle.bubble").on('click', tooltip);
-	  // d3.selectAll(".bubbles").on('click', tooltip);
+	  d3.selectAll("circle.bubble2").on('click', tooltip);
+	  d3.selectAll("circle.bubble3").on('click', tooltip);
 	  d3.selectAll(".rpt").on('click', start);
+
+	  // $('.bubbles2').click(function (e){console.log('her')});
+
+	  function tooltip2(d) {
+	  	console.log(this.r)	
+	  	console.log('heelo')  	
+
+	  }
 
 	  //function to add commas
 		function numberWithCommas(x) {

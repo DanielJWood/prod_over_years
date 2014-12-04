@@ -109,7 +109,7 @@
   stroke-width: 2px;
 }
 
-.bubbles {
+.bubbles, .bubbles2, .bubbles3 {
   fill-opacity: .5;
   stroke: #333;
   stroke-width: .5px;
@@ -117,7 +117,7 @@
   fill:#ffb732;
 }
 
-.bubbles :hover {
+.bubbles :hover, .bubbles2 :hover, .bubbles3 :hover {
   stroke: #ffb732;
   stroke-width: 3px;
   /*fill: #ff5614;*/

@@ -1,7 +1,7 @@
 [
   {
     "StateCode":"X3",
-    "StateName":"Federal Offshore, Gulf of Mexico",
+    "StateName":"Gulf of Mexico",
     "total1993":1746484,
     "total1994":1820168,
     "total1995":1997044,
@@ -165,7 +165,7 @@
   },
   {
     "StateCode":"X5",
-    "StateName":"Federa Offshore, Pacific",
+    "StateName":"Pacific",
     "total1993":293706,
     "total1994":333552,
     "total1995":415912,
