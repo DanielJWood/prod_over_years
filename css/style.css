@@ -48,7 +48,7 @@
 
 #attribution {
   position: absolute;
-  bottom: 0px;
+  bottom: -20px;
   padding-left: 5px;
   border-bottom: none !important;
   color: #333 !important;

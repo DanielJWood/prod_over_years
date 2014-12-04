@@ -1,4 +1,5 @@
 var totalDiv = document.getElementById('totalDiv')
+		var boxWidth = 40;
 
 
 // Set some variables
@@ -118,10 +119,23 @@ d3.json("js/us_93_02_v3.json", function(error, us) {
 				.append("circle")
 				.attr("class", "bubble3");
 
+		var repeatz = svg.append("g")
+			.attr("class", "rpt")
+			.attr("id", "repeater")
+			.append("rect")					
+				.attr("class","rpt2")
+				.attr("width", boxWidth)
+        .attr("height", boxWidth)
+	      .style("fill", "transparent")       // this code works OK
+	      .style("fill", "url(#imageID1)");
+
 		bubblediv.selectAll("circle")
 			.data(topojson.feature(us, us.objects.us_10m).features)
 			.enter().append("circle")
 			.attr("class", "bubble")   
+
+		
+
 
 		// Resize function
 		function resize() {			
@@ -131,7 +145,7 @@ d3.json("js/us_93_02_v3.json", function(error, us) {
 			d3.selectAll(".lg").remove();
 			d3.selectAll("#slider").remove();
 			d3.selectAll(".sly1").remove();
-			d3.selectAll(".rpt").remove();
+			// d3.selectAll(".rpt").remove();
 
 			// resize width
 			var width = parseInt(d3.select("#master_container").style("width")),
@@ -162,20 +176,12 @@ d3.json("js/us_93_02_v3.json", function(error, us) {
 			var boxWidth = 40;
 			var boxMargin = margin*1.5;
 			var boxSegment = boxWidth + (boxMargin);
-			var barWidth = width - margin - boxSegment;
+			var barWidth = width - margin - boxSegment;   
 
-			var repeat = svg.append("g")
-				.attr("class", "rpt")
-				.attr("id", "repeater")
-				.append("rect")					
-					.attr("transform", function() { 
-	          return "translate("+ (barWidth + margin + (boxMargin / 2)) + ","+ top +")"; })
-	        .attr("width", boxWidth)
-	        .attr("height", boxWidth)
-		      .style("fill", "transparent")       // this code works OK
-		      .style("fill", "url(#imageID1)");   
-
-
+			svg.selectAll(".rpt2")
+				.attr("transform", function() { 
+          return "translate("+ (barWidth + margin + (boxMargin / 2)) + ","+ top +")"; });
+        
 			var sliderContainer = svg.append("g")
 	      .attr("id", "slider")
 	      .attr("class", "sly1")
@@ -259,7 +265,7 @@ d3.json("js/us_93_02_v3.json", function(error, us) {
 		else if (gotype == "na") { var k = 4; var gotypename = "Natural Gas"} 
 		else if (gotype == "tr") { var k = 5; var gotypename = "Total Renewable Energy"} 
 		else if (gotype == "or") { var k = 6; var gotypename = "Other Renewable Energy"} 
-		else if (gotype == "bi") { var k = 8; var gotypename = "Biofuels"; console.log('yes')} 
+		else if (gotype == "bi") { var k = 8; var gotypename = "Biofuels";} 
 		else if (gotype == "nu") { var k = 7; var gotypename = "Nuclear Power"}
 		else {
 			// console.log('error')
@@ -524,7 +530,6 @@ d3.json("js/us_93_02_v3.json", function(error, us) {
 		var play;
 
 		function start() {
-
 		if (play != "undefined") {
 			clearInterval(play);	
 		};
@@ -566,15 +571,10 @@ d3.json("js/us_93_02_v3.json", function(error, us) {
 	  d3.selectAll("circle.bubble").on('click', tooltip);
 	  d3.selectAll("circle.bubble2").on('click', tooltip);
 	  d3.selectAll("circle.bubble3").on('click', tooltip);
-	  d3.selectAll(".rpt").on('click', start);
+		d3.selectAll(".rpt2").on('click', start);
 
 	  // $('.bubbles2').click(function (e){console.log('her')});
 
-	  function tooltip2(d) {
-	  	console.log(this.r)	
-	  	console.log('heelo')  	
-
-	  }
 
 	  //function to add commas
 		function numberWithCommas(x) {
