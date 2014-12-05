@@ -54,8 +54,9 @@ d3.json("js/us_93_02_v3.json", function(error, us) {
 		(function ($) { 
 				$('select').change(function (e){
 					if (i == num) {
-						var width = parseInt(d3.select("#master_container").style("width"));
-						BuildBubbles(width);
+						start();
+						// var width = parseInt(d3.select("#master_container").style("width"));
+						// BuildBubbles(width);
 					};
 				});
 		}(jQuery));  
