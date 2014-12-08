@@ -247,9 +247,9 @@ cursor: pointer;
 
 /*Repeater*/
 
-#repeater {
+#repeater, #fastforward, #rewind {
   cursor:  pointer;
-    stroke: #333;
+    stroke: #fff;
   stroke-linejoin: round;
   stroke-linecap: round;
   stroke-width: 1px;

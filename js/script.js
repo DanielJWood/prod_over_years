@@ -35,11 +35,29 @@ var pattern = defs.append("pattern")
   .attr("height",imgHeight)
   .attr("width",imgWidth)
   .attr("id","imageID1")
-  .append("svg:image")
+
+var image = pattern.append("svg:image")
     .attr("width",imgWidth - 10)
     .attr("height",imgHeight - 10)
-    .attr("xlink:href", "http://energy.gov/sites/prod/files/arrow_160.png");
+    .attr("xlink:href", "img/mediaButtons_pause.png");
 
+var pattern2 = defs.append("pattern")
+  .attr("height",imgHeight)
+  .attr("width",imgWidth)
+  .attr("id","imageID2")
+	.append("svg:image")
+    .attr("width",imgWidth - 10)
+    .attr("height",imgHeight - 10)
+    .attr("xlink:href", "img/mediaButtons_rewind.png");    
+
+var pattern3 = defs.append("pattern")
+  .attr("height",imgHeight)
+  .attr("width",imgWidth)
+  .attr("id","imageID3")
+	.append("svg:image")
+    .attr("width",imgWidth - 10)
+    .attr("height",imgHeight - 10)
+    .attr("xlink:href", "img/mediaButtons_ff.png");
 
 // load some data
 d3.json("js/us_93_02_v3.json", function(error, us) {
@@ -54,9 +72,10 @@ d3.json("js/us_93_02_v3.json", function(error, us) {
 		(function ($) { 
 				$('select').change(function (e){
 					if (i == num) {
-						start();
-						// var width = parseInt(d3.select("#master_container").style("width"));
-						// BuildBubbles(width);
+						start();						
+					} else {
+						var width = parseInt(d3.select("#master_container").style("width"));
+						BuildBubbles(width);
 					};
 				});
 		}(jQuery));  
@@ -130,13 +149,30 @@ d3.json("js/us_93_02_v3.json", function(error, us) {
 	      .style("fill", "transparent")       // this code works OK
 	      .style("fill", "url(#imageID1)");
 
+	  var rewind = svg.append("g")
+			.attr("class", "rpt")
+			.attr("id", "rewind")
+			.append("rect")					
+				.attr("class","rw2")
+				.attr("width", boxWidth)
+        .attr("height", boxWidth)
+	      .style("fill", "transparent")       // this code works OK
+	      .style("fill", "url(#imageID2)");
+
+		var fastforward = svg.append("g")
+			.attr("class", "rpt")
+			.attr("id", "fastforward")
+			.append("rect")					
+				.attr("class","ff2")
+				.attr("width", boxWidth)
+        .attr("height", boxWidth)
+	      .style("fill", "transparent")       // this code works OK
+	      .style("fill", "url(#imageID3)");
+
 		bubblediv.selectAll("circle")
 			.data(topojson.feature(us, us.objects.us_10m).features)
 			.enter().append("circle")
-			.attr("class", "bubble")   
-
-		
-
+			.attr("class", "bubble")   	
 
 		// Resize function
 		function resize() {			
@@ -161,7 +197,7 @@ d3.json("js/us_93_02_v3.json", function(error, us) {
 			} else if (width <= 900) {
 				projection
 					.scale(width * 1.2)
-					.translate([width / 2, ((height / 2) + 30)])             
+					.translate([width / 2, ((height / 2) + 30)])  
 			} 
 
 			// full viewport
@@ -176,13 +212,21 @@ d3.json("js/us_93_02_v3.json", function(error, us) {
 			var left = margin;
 			var boxWidth = 40;
 			var boxMargin = margin*1.5;
-			var boxSegment = boxWidth + (boxMargin);
+			var boxSegment = 3*boxWidth + (boxMargin);
 			var barWidth = width - margin - boxSegment;   
 
-			svg.selectAll(".rpt2")
+			svg.selectAll(".rw2")
 				.attr("transform", function() { 
           return "translate("+ (barWidth + margin + (boxMargin / 2)) + ","+ top +")"; });
         
+			svg.selectAll(".rpt2")
+				.attr("transform", function() { 
+          return "translate("+ (barWidth + margin + boxWidth + (boxMargin / 2)) + ","+ top +")"; });
+
+			svg.selectAll(".ff2")
+				.attr("transform", function() { 
+          return "translate("+ (barWidth + margin + (2* boxWidth) + (boxMargin / 2)) + ","+ top +")"; });
+
 			var sliderContainer = svg.append("g")
 	      .attr("id", "slider")
 	      .attr("class", "sly1")
@@ -363,7 +407,7 @@ d3.json("js/us_93_02_v3.json", function(error, us) {
 
 			var boxWidth = 40;
 			var boxMargin = margin*1.5;
-			var boxSegment = boxWidth + (boxMargin);
+			var boxSegment = 3*boxWidth + (boxMargin);
 			var barWidth = w - margin - boxSegment;
 			var barPoint = margin + ((barWidth / num)*i)
 
@@ -525,10 +569,12 @@ d3.json("js/us_93_02_v3.json", function(error, us) {
 	}
 
 		// begin looping stuff
-		var num	= 19 //number of iterations, i.e. years		
+		var num	= 3; //number of iterations, i.e. years		
 		var i = 0; // which year you are on when you start 
 		// var k = 1; // which type of data you are looking at (total vs crude, etc)
 		var play;
+
+		var m=0;
 
 		function start() {
 		if (play != "undefined") {
@@ -541,14 +587,56 @@ d3.json("js/us_93_02_v3.json", function(error, us) {
 			play = setInterval(mechanic,1000);	
 		}
 
+		function pause() {
+			
+			if (m === 0 && i != num) {
+				image.attr("xlink:href", "img/mediaButtons_play.png");
+				m+=1;
+				clearInterval(play);		 
+			} else if (m === 1 && i != num) {
+				image.attr("xlink:href", "img/mediaButtons_pause.png");
+				m-=1;
+				play = setInterval(mechanic,1000);	
+			} else {
+				console.log('done')
+				image.attr("xlink:href", "img/mediaButtons_pause.png"); //restart at the beginning??
+				i-= (num+1);
+				play = setInterval(mechanic,1000);	
+			}				
+		}
+
+		function ff() {			
+			if (i === num) {
+				i-=(num);
+				rebuildLoop(i);
+			} else {
+				image.attr("xlink:href", "img/mediaButtons_play.png");
+				i +=1;
+				rebuildLoop(i);	
+			};			
+		}
+
+		function rw() {		
+			if (i === 0) {
+				i+=(num);
+				rebuildLoop(i);
+			} else {
+				i -=1;
+				rebuildLoop(i);	
+			};					
+		}
+
 		// what to do each iteration
 		function mechanic() {			
-				i += 1;					
-			
+			i += 1;								
 			if (i === num) {			
-					clearInterval(play);		 
-				}							
+				image.attr("xlink:href", "img/mediaButtons_redo.png");
+				// image.attr("xlink:href", "http://energy.gov/sites/prod/files/arrow_160.png");
+				
+				clearInterval(play);		 
+			}							
 			rebuildLoop(i);
+
 		}
 
 		function rebuildLoop(i) {			
@@ -572,7 +660,9 @@ d3.json("js/us_93_02_v3.json", function(error, us) {
 	  d3.selectAll("circle.bubble").on('click', tooltip);
 	  d3.selectAll("circle.bubble2").on('click', tooltip);
 	  d3.selectAll("circle.bubble3").on('click', tooltip);
-		d3.selectAll(".rpt2").on('click', start);
+		d3.selectAll(".rpt2").on('click', pause);
+		d3.selectAll(".rw2").on('click', rw);
+		d3.selectAll(".ff2").on('click', ff);
 
 	  // $('.bubbles2').click(function (e){console.log('her')});
 
