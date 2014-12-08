@@ -312,9 +312,7 @@ d3.json("js/us_93_02_v3.json", function(error, us) {
 		else if (gotype == "or") { var k = 6; var gotypename = "Other Renewable Energy"} 
 		else if (gotype == "bi") { var k = 8; var gotypename = "Biofuels";} 
 		else if (gotype == "nu") { var k = 7; var gotypename = "Nuclear Power"}
-		else {
-			// console.log('error')
-		}
+		else {		}
 
 // need to add in Biofuels
 
@@ -446,9 +444,7 @@ d3.json("js/us_93_02_v3.json", function(error, us) {
 		else if (gotype == "or") { var k = 6; var gotypename = "Other Renewable Energy"} 
 		else if (gotype == "bi") { var k = 8; var gotypename = "Biofuels"} 
 		else if (gotype == "nu") { var k = 7; var gotypename = "Nuclear Power"}
-		else {
-			// console.log('error')
-		}
+		else {		}
 
 		var type = typeArray[k][i]
 
@@ -569,7 +565,7 @@ d3.json("js/us_93_02_v3.json", function(error, us) {
 	}
 
 		// begin looping stuff
-		var num	= 3; //number of iterations, i.e. years		
+		var num	= 19; //number of iterations, i.e. years		
 		var i = 0; // which year you are on when you start 
 		// var k = 1; // which type of data you are looking at (total vs crude, etc)
 		var play;
@@ -598,7 +594,6 @@ d3.json("js/us_93_02_v3.json", function(error, us) {
 				m-=1;
 				play = setInterval(mechanic,1000);	
 			} else {
-				console.log('done')
 				image.attr("xlink:href", "img/mediaButtons_pause.png"); //restart at the beginning??
 				i-= (num+1);
 				play = setInterval(mechanic,1000);	
@@ -607,10 +602,10 @@ d3.json("js/us_93_02_v3.json", function(error, us) {
 
 		function ff() {			
 			if (i === num) {
+				image.attr("xlink:href", "img/mediaButtons_play.png");
 				i-=(num);
 				rebuildLoop(i);
-			} else {
-				image.attr("xlink:href", "img/mediaButtons_play.png");
+			} else {				
 				i +=1;
 				rebuildLoop(i);	
 			};			
@@ -618,6 +613,7 @@ d3.json("js/us_93_02_v3.json", function(error, us) {
 
 		function rw() {		
 			if (i === 0) {
+				image.attr("xlink:href", "img/mediaButtons_redo.png");
 				i+=(num);
 				rebuildLoop(i);
 			} else {
@@ -631,8 +627,7 @@ d3.json("js/us_93_02_v3.json", function(error, us) {
 			i += 1;								
 			if (i === num) {			
 				image.attr("xlink:href", "img/mediaButtons_redo.png");
-				// image.attr("xlink:href", "http://energy.gov/sites/prod/files/arrow_160.png");
-				
+				// image.attr("xlink:href", "http://energy.gov/sites/prod/files/arrow_160.png");				
 				clearInterval(play);		 
 			}							
 			rebuildLoop(i);
@@ -663,9 +658,6 @@ d3.json("js/us_93_02_v3.json", function(error, us) {
 		d3.selectAll(".rpt2").on('click', pause);
 		d3.selectAll(".rw2").on('click', rw);
 		d3.selectAll(".ff2").on('click', ff);
-
-	  // $('.bubbles2').click(function (e){console.log('her')});
-
 
 	  //function to add commas
 		function numberWithCommas(x) {
