@@ -39,7 +39,7 @@ var pattern = defs.append("pattern")
 var image = pattern.append("svg:image")
     .attr("width",imgWidth - 10)
     .attr("height",imgHeight - 10)
-    .attr("xlink:href", "img/mediaButtons_pause.png");
+    .attr("xlink:href", "/img/mediaButtons_pause.png");
 
 var pattern2 = defs.append("pattern")
   .attr("height",imgHeight)
@@ -48,7 +48,7 @@ var pattern2 = defs.append("pattern")
 	.append("svg:image")
     .attr("width",imgWidth - 10)
     .attr("height",imgHeight - 10)
-    .attr("xlink:href", "img/mediaButtons_rewind.png");    
+    .attr("xlink:href", "/img/mediaButtons_rewind.png");    
 
 var pattern3 = defs.append("pattern")
   .attr("height",imgHeight)
@@ -57,7 +57,7 @@ var pattern3 = defs.append("pattern")
 	.append("svg:image")
     .attr("width",imgWidth - 10)
     .attr("height",imgHeight - 10)
-    .attr("xlink:href", "img/mediaButtons_ff.png");
+    .attr("xlink:href", "/img/mediaButtons_ff.png");
 
 // load some data
 d3.json("js/us_93_02_v3.json", function(error, us) {
@@ -586,15 +586,15 @@ d3.json("js/us_93_02_v3.json", function(error, us) {
 		function pause() {
 			
 			if (m === 0 && i != num) {
-				image.attr("xlink:href", "img/mediaButtons_play.png");
+				image.attr("xlink:href", "/img/mediaButtons_play.png");
 				m+=1;
 				clearInterval(play);		 
 			} else if (m === 1 && i != num) {
-				image.attr("xlink:href", "img/mediaButtons_pause.png");
+				image.attr("xlink:href", "/img/mediaButtons_pause.png");
 				m-=1;
 				play = setInterval(mechanic,1000);	
 			} else {
-				image.attr("xlink:href", "img/mediaButtons_pause.png"); //restart at the beginning??
+				image.attr("xlink:href", "/img/mediaButtons_pause.png"); //restart at the beginning??
 				i-= (num+1);
 				play = setInterval(mechanic,1000);	
 			}				
@@ -602,7 +602,7 @@ d3.json("js/us_93_02_v3.json", function(error, us) {
 
 		function ff() {			
 			if (i === num) {
-				image.attr("xlink:href", "img/mediaButtons_play.png");
+				image.attr("xlink:href", "/img/mediaButtons_play.png");
 				i-=(num);
 				rebuildLoop(i);
 			} else {				
@@ -613,7 +613,7 @@ d3.json("js/us_93_02_v3.json", function(error, us) {
 
 		function rw() {		
 			if (i === 0) {
-				image.attr("xlink:href", "img/mediaButtons_redo.png");
+				image.attr("xlink:href", "/img/mediaButtons_redo.png");
 				i+=(num);
 				rebuildLoop(i);
 			} else {
@@ -626,7 +626,7 @@ d3.json("js/us_93_02_v3.json", function(error, us) {
 		function mechanic() {			
 			i += 1;								
 			if (i === num) {			
-				image.attr("xlink:href", "img/mediaButtons_redo.png");
+				image.attr("xlink:href", "/img/mediaButtons_redo.png");
 				// image.attr("xlink:href", "http://energy.gov/sites/prod/files/arrow_160.png");				
 				clearInterval(play);		 
 			}							

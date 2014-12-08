@@ -246,7 +246,6 @@ cursor: pointer;
 }
 
 /*Repeater*/
-
 #repeater, #fastforward, #rewind {
   cursor:  pointer;
     stroke: #fff;
@@ -256,7 +255,6 @@ cursor: pointer;
 }
 
 /*Responsive*/
-
 @media (max-width:900px){
  #master_container { 
   padding-bottom:58% !important; 
