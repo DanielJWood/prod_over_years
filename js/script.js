@@ -59,17 +59,21 @@ var pattern3 = defs.append("pattern")
     .attr("height",imgHeight - 10)
     .attr("xlink:href", "img/mediaButtons_ff.png");
 
+(function ($) { 
+
 // load some data
+// d3.json("/sites/prod/files/us_93_02_v3.json", function(error, us) {
 d3.json("js/us_93_02_v3.json", function(error, us) {
 	if (error) return console.error(error);
 
 	var TheData = topojson.feature(us, us.objects.us_10m).features		
 
-	d3.json("js/offshore2.json", function(error, offshore) {
+	// d3.json("/sites/prod/files/offshore2.json", function(error, offshore) {
+		d3.json("js/offshore2.json", function(error, offshore) {
 		if (error) return console.error(error + "error in offshore");
 
 		// Do something on the click of selector
-		(function ($) { 
+		
 				$('select').change(function (e){
 					if (i == num) {
 						start();						
@@ -78,7 +82,7 @@ d3.json("js/us_93_02_v3.json", function(error, us) {
 						BuildBubbles(width);
 					};
 				});
-		}(jQuery));  
+
 
 		var data2 = topojson.feature(us, us.objects.us_10m).features
 
@@ -302,8 +306,10 @@ d3.json("js/us_93_02_v3.json", function(error, us) {
 		// Tooltips section goes here
 
 		function BuildBubbles(w, type) {		
+					// (function ($) { 
 			var gotype = $("select").val()
-			
+					// }(jQuery));  
+
 		if (gotype == "to") { var k = 1; var gotypename = "Total Energy Produced"} 
 		else if (gotype == "co") { var k = 2; var gotypename = "Coal"} 
 		else if (gotype == "cr") { var k = 3; var gotypename = "Crude Oil"} 
@@ -666,7 +672,7 @@ d3.json("js/us_93_02_v3.json", function(error, us) {
 
 	}); //end offshore.json
 }); //end states.json
-
+		}(jQuery));  
 
 // var start1 = new Date().getTime()			
 			// var elapsed = new Date().getTime() - start1;
